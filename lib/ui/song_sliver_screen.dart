@@ -337,49 +337,44 @@ class CustomSliverAppbarDelegate extends SliverPersistentHeaderDelegate {
         // ),
         Opacity(
           opacity: shrinkOffset / expandedHeight,
-          child: Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(14),
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: random == 0
-                    ? one
-                    : random == 1
-                        ? two
-                        : random == 2
-                            ? three
-                            : random == 4
-                                ? four
-                                : random == 5
-                                    ? five
-                                    : [
-                                        Colors.pink.shade300,
-                                        Colors.pink.shade100,
-                                        Colors.white,
-                                      ],
-              ),
-            ),
-            child: AppBar(
-              backgroundColor: Colors.transparent,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: blackColor,
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            centerTitle: true,
+            leading: const SizedBox(),
+            title: Container(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.078),
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: random == 0
+                      ? one
+                      : random == 1
+                          ? two
+                          : random == 2
+                              ? three
+                              : random == 4
+                                  ? four
+                                  : random == 5
+                                      ? five
+                                      : [
+                                          Colors.pink.shade300,
+                                          Colors.pink.shade100,
+                                          Colors.white,
+                                        ],
                 ),
+                borderRadius: BorderRadius.circular(
+                  36,
+                ),
+                border: Border.all(width: 2, color: Colors.white),
               ),
-              centerTitle: true,
-              title: SizedBox(
-                width: size.width * 0.275,
-                child: Stack(
-                  children: [
-                    ClipRRect(
+              width: size.width * 0.45,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ClipRRect(
                       // clipBehavior: Clip.antiAlias,
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
@@ -389,32 +384,106 @@ class CustomSliverAppbarDelegate extends SliverPersistentHeaderDelegate {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.play_circle_fill_outlined,
-                          size: 50,
-                        ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white,
+                      ),
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.play_circle_fill_outlined,
+                        size: 50,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.more_vert,
-                    color: blackColor,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
+        // Opacity(
+        //   opacity: shrinkOffset / expandedHeight,
+        //   child: Container(
+        //     clipBehavior: Clip.antiAlias,
+        //     decoration: BoxDecoration(
+        //       borderRadius: const BorderRadius.vertical(
+        //         bottom: Radius.circular(14),
+        //       ),
+        //       gradient: LinearGradient(
+        //         begin: Alignment.topCenter,
+        //         end: Alignment.bottomCenter,
+        //         colors: random == 0
+        //             ? one
+        //             : random == 1
+        //                 ? two
+        //                 : random == 2
+        //                     ? three
+        //                     : random == 4
+        //                         ? four
+        //                         : random == 5
+        //                             ? five
+        //                             : [
+        //                                 Colors.pink.shade300,
+        //                                 Colors.pink.shade100,
+        //                                 Colors.white,
+        //                               ],
+        //       ),
+        //     ),
+        //     child: AppBar(
+        //       backgroundColor: Colors.transparent,
+        //       leading: IconButton(
+        //         onPressed: () {
+        //           Navigator.of(context).pop();
+        //         },
+        //         icon: const Icon(
+        //           Icons.arrow_back_ios,
+        //           color: blackColor,
+        //         ),
+        //       ),
+        //       centerTitle: true,
+        //       title: SizedBox(
+        //         width: size.width * 0.275,
+        //         child: Stack(
+        //           children: [
+        //             ClipRRect(
+        //               // clipBehavior: Clip.antiAlias,
+        //               borderRadius: BorderRadius.circular(10),
+        //               child: Image.network(
+        //                 sImg,
+        //                 height: size.height * 0.065,
+        //                 width: size.width * 0.145,
+        //                 fit: BoxFit.cover,
+        //               ),
+        //             ),
+        //             Align(
+        //               alignment: Alignment.centerRight,
+        //               child: IconButton(
+        //                 padding: EdgeInsets.zero,
+        //                 onPressed: () {},
+        //                 icon: const Icon(
+        //                   Icons.play_circle_fill_outlined,
+        //                   size: 50,
+        //                 ),
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //       actions: [
+        //         IconButton(
+        //           onPressed: () {},
+        //           icon: const Icon(
+        //             Icons.more_vert,
+        //             color: blackColor,
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
         //
       ],
     );
