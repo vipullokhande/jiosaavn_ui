@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:jiosaavn_vip/colors.dart';
 
@@ -20,10 +19,12 @@ class SongSliverScreen extends StatefulWidget {
 }
 
 class _SongSliverScreenState extends State<SongSliverScreen> {
+  // ScrollController scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
+        // controller: scrollController,
         scrollDirection: Axis.vertical,
         slivers: [
           SliverPersistentHeader(
@@ -129,7 +130,6 @@ class CustomSliverAppbarDelegate extends SliverPersistentHeaderDelegate {
   ];
   var random = Random().nextInt(6);
   double expandedHeight;
-
   String sName;
   String sTitle;
   String sImg;
@@ -375,28 +375,33 @@ class CustomSliverAppbarDelegate extends SliverPersistentHeaderDelegate {
                 ),
               ),
               centerTitle: true,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ClipRRect(
-                    // clipBehavior: Clip.antiAlias,
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      sImg,
-                      height: size.height * 0.065,
-                      width: size.width * 0.15,
-                      fit: BoxFit.cover,
+              title: SizedBox(
+                width: size.width * 0.275,
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      // clipBehavior: Clip.antiAlias,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        sImg,
+                        height: size.height * 0.065,
+                        width: size.width * 0.145,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.play_circle_fill_outlined,
-                      size: 50,
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.play_circle_fill_outlined,
+                          size: 50,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               actions: [
                 IconButton(
@@ -410,6 +415,7 @@ class CustomSliverAppbarDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
         ),
+        //
       ],
     );
   }

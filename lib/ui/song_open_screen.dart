@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:jiosaavn_vip/widgets/song_widget.dart';
 

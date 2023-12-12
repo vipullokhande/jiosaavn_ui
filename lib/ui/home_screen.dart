@@ -149,7 +149,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'https://c.saavncdn.com/139/O-Womaniya-Women-s-Day-Special-Hindi-2023-20230306204959-500x500.jpg',
     'https://img.freepik.com/premium-vector/abstract-music-dance-poster-music-event-design-vector-illustration_460848-11647.jpg'
   ];
-
   bool isSearch = false;
   bool isClose = false;
   List<String> find = [];
@@ -400,19 +399,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     onLongPressed: () {
                                       showModalBottomSheet(
+                                        isScrollControlled: true,
                                         context: context,
                                         backgroundColor: Colors.transparent,
                                         builder: (context) {
                                           return Container(
                                             margin: const EdgeInsets.only(
                                                 bottom: 10),
-                                            height: double.maxFinite,
+                                            height: size.height * 0.65,
                                             child: Stack(
                                               alignment: Alignment.bottomCenter,
                                               children: [
                                                 Container(
                                                   width: size.width * 0.9,
-                                                  height: size.height * 0.45,
+                                                  height: size.height * 0.55,
                                                   padding: EdgeInsets.only(
                                                     top: size.height * 0.1,
                                                   ),
@@ -424,9 +424,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Radius.circular(12),
                                                     ),
                                                   ),
-                                                  child: ListView(
-                                                    scrollDirection:
-                                                        Axis.vertical,
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
                                                     children: [
                                                       ListTile(
                                                         leading: const Icon(
@@ -724,19 +726,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     onLongPressed: () {
                                       showModalBottomSheet(
+                                        isScrollControlled: true,
                                         context: context,
                                         backgroundColor: Colors.transparent,
                                         builder: (context) {
                                           return Container(
                                             margin: const EdgeInsets.only(
                                                 bottom: 10),
-                                            height: double.maxFinite,
+                                            height: size.height * 0.65,
                                             child: Stack(
                                               alignment: Alignment.bottomCenter,
                                               children: [
                                                 Container(
                                                   width: size.width * 0.9,
-                                                  height: size.height * 0.45,
+                                                  height: size.height * 0.55,
                                                   padding: EdgeInsets.only(
                                                     top: size.height * 0.1,
                                                   ),
@@ -748,9 +751,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Radius.circular(12),
                                                     ),
                                                   ),
-                                                  child: ListView(
-                                                    scrollDirection:
-                                                        Axis.vertical,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
                                                     children: [
                                                       ListTile(
                                                         leading: const Icon(
@@ -898,19 +901,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     onLongPressed: () {
                                       showModalBottomSheet(
+                                        isScrollControlled: true,
                                         context: context,
                                         backgroundColor: Colors.transparent,
                                         builder: (context) {
                                           return Container(
                                             margin: const EdgeInsets.only(
                                                 bottom: 10),
-                                            height: double.maxFinite,
+                                            height: size.height * 0.65,
                                             child: Stack(
                                               alignment: Alignment.bottomCenter,
                                               children: [
                                                 Container(
                                                   width: size.width * 0.9,
-                                                  height: size.height * 0.45,
+                                                  height: size.height * 0.55,
                                                   padding: EdgeInsets.only(
                                                     top: size.height * 0.1,
                                                   ),
@@ -922,9 +926,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Radius.circular(12),
                                                     ),
                                                   ),
-                                                  child: ListView(
-                                                    scrollDirection:
-                                                        Axis.vertical,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
                                                     children: [
                                                       ListTile(
                                                         leading: const Icon(
@@ -1072,19 +1076,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     onLongPressed: () {
                                       showModalBottomSheet(
+                                        isScrollControlled: true,
                                         context: context,
                                         backgroundColor: Colors.transparent,
                                         builder: (context) {
                                           return Container(
                                             margin: const EdgeInsets.only(
                                                 bottom: 10),
-                                            height: double.maxFinite,
+                                            height: size.height * 0.65,
                                             child: Stack(
                                               alignment: Alignment.bottomCenter,
                                               children: [
                                                 Container(
                                                   width: size.width * 0.9,
-                                                  height: size.height * 0.45,
+                                                  height: size.height * 0.55,
                                                   padding: EdgeInsets.only(
                                                     top: size.height * 0.1,
                                                   ),
@@ -1096,9 +1101,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Radius.circular(12),
                                                     ),
                                                   ),
-                                                  child: ListView(
-                                                    scrollDirection:
-                                                        Axis.vertical,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
                                                     children: [
                                                       ListTile(
                                                         leading: const Icon(
