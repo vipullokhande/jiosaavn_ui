@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "221400556975",
+    "project_id": "jiosaavn-8d132",
+    "storage_bucket": "jiosaavn-8d132.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221400556975:android:757b1d53c104f6e2e73b5a",
+        "android_client_info": {
+          "package_name": "com.example.jiosaavn_vip"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8apIN4A2AY3LpdtyiiYC7jZCTrQuZqGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

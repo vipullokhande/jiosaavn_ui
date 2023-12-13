@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jiosaavn_vip/colors.dart';
+import 'package:jiosaavn_vip/controllers/current_song_controller.dart';
 import 'package:jiosaavn_vip/ui/my_library_screen.dart';
 import 'package:jiosaavn_vip/ui/song_open_screen.dart';
 import 'package:jiosaavn_vip/ui/song_player_screen.dart';
@@ -8,6 +12,7 @@ import 'package:jiosaavn_vip/widgets/app_bar_text.dart';
 import 'package:jiosaavn_vip/widgets/recently_played_widget.dart';
 import 'package:jiosaavn_vip/widgets/search_item.dart';
 import 'package:jiosaavn_vip/widgets/single_channel_item_search.dart';
+import 'package:jiosaavn_vip/widgets/song_player.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,9 +22,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var c = Get.put(CurrentSongController());
   int internal = 0;
   int index = 0;
-
+  List<String> hindiSongs = [
+    '01  Zara Sa - www.downloadming.com.mp3',
+    'Apna-Bana-Le(PagalWorld).mp3',
+    'Deva Shree Ganesha_64(PagalWorld.com.pe).mp3',
+    'Kiya Kiya - Welcome 128 Kbps.mp3',
+    'Labon Ko Bhool Bhulaiyaa 128 Kbps.mp3',
+    'Maan Meri Jaan_64(PagalWorld.com.pe).mp3',
+  ];
+  List<String> hindiSongsImgUrls = [
+    'https://i1.sndcdn.com/artworks-000497442375-r9olt2-t500x500.jpg',
+    'https://i.ytimg.com/vi/FqchmlJbINs/maxresdefault.jpg',
+    'https://c.saavncdn.com/506/Deva-Shree-Ganesha-Sanskrit-2012-20200518122611-500x500.jpg',
+    'https://c.saavncdn.com/199/Welcome-Hindi-2007-500x500.jpg',
+    'https://c.saavncdn.com/056/Bhool-Bhulaiyaa-Hindi-2007-20221122005742-500x500.jpg',
+    'https://i0.wp.com/99lyricstore.com/wp-content/uploads/2022/10/Maan-Meri-Jaan-Lyrics-King.jpg',
+  ];
   List<String> recentSongText = [
     'Pop divas',
     'Full on energy',
@@ -153,8 +174,22 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isClose = false;
   List<String> find = [];
   List<int> findI = [];
+  //
+  late AudioPlayer audioPlayer;
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer = AudioPlayer();
+    // audioPlayer.onPlayerStateChanged.listen((event) {
+    //   setState(() {
+    //     Get.find<CurrentSongController>().
+    //   });
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isPlayed = c.isPlay;
     var editController = TextEditingController();
     var size = MediaQuery.of(context).size;
     var searchController = ScrollController();
@@ -364,6 +399,107 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(
                               height: 180,
+                              child:GetBuilder<CurrentSongController>(
+                                  builder: (con) => ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: hindiSongs.length,
+                                shrinkWrap: true,
+                                physics: const ClampingScrollPhysics(),
+                                itemBuilder: (context, index) =>
+                                     RecentlyPlayedWidget(
+                                    recentAlbumText: hindiSongs[index],
+                                    onPressed: () {
+                                      // setState(() {
+                                      //   if (con.isPlay) {
+                                      //     audioPlayer.pause();
+                                      //     con.isPlay = false;
+                                      //   } else {
+                                      //     audioPlayer.play(
+                                      //       AssetSource(
+                                      //         hindiSongs[index],
+                                      //       ),
+                                      //     );
+                                      //     con.isPlay = true;
+                                      //   }
+                                      // });
+                                    },
+                                    onTap: () {
+                                      if (!isPlayed) {
+                                        c.isPlay = true;
+                                      }
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => SongScreen(
+                                            audioPlayer: audioPlayer,
+                                            path: hindiSongs[index],
+                                            index: index,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    onLongPressed: () {},
+                                    recentSongImg: hindiSongsImgUrls[index],
+                                    recHeadColor: blackColor,
+                                    recDescColor: recdescColor,
+                                    recentAlbumDescText: hindiSongs[index],
+                                    widgett: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () {
+                                        setState(() {
+                                          if (con.isPlay) {
+                                            if (con.index != index) {
+                                              con.index = index;
+                                              audioPlayer.play(AssetSource(
+                                                  hindiSongs[index]));
+                                              return;
+                                            }
+                                            con.index = index;
+                                            audioPlayer.pause();
+                                            con.isPlay = false;
+                                          } else {
+                                            con.isPlay = true;
+                                            con.index = index;
+                                            audioPlayer.play(
+                                              AssetSource(
+                                                hindiSongs[index],
+                                              ),
+                                            );
+                                          }
+                                        });
+                                      },
+                                      icon: Icon(
+                                        con.index == index && con.isPlay
+                                            ? Icons.pause_circle_filled
+                                            : Icons.play_circle_fill,
+                                        color: whiteColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12)
+                            .copyWith(top: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 7),
+                              child: Text(
+                                'Recently Played',
+                                style: TextStyle(
+                                    color: blackColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 180,
                               child: ListView.builder(
                                 itemCount: recentSongText.length,
                                 scrollDirection: Axis.horizontal,
@@ -379,6 +515,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     recentSongImg: sImg,
                                     recHeadColor: blackColor,
                                     recDescColor: recdescColor,
+                                    // icon: Icons.play_circle_filled_outlined,
+                                    widgett: const SizedBox(),
                                     onPressed: () {},
                                     onTap: () {
                                       Navigator.of(context).push(
@@ -712,6 +850,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     recentSongImg: sImg,
                                     recHeadColor: blackColor,
                                     recDescColor: recdescColor,
+                                    widgett: const SizedBox(),
+                                    // icon: Icons.play_circle_fill_outlined,
                                     onPressed: () {},
                                     onTap: () {
                                       Navigator.of(context).push(
@@ -887,6 +1027,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     recentSongImg: sImg,
                                     recHeadColor: blackColor,
                                     recDescColor: recdescColor,
+                                    // icon: Icons.play_circle_fill_outlined,
+                                    widgett: const SizedBox(),
                                     onPressed: () {},
                                     onTap: () {
                                       Navigator.of(context).push(
@@ -1062,6 +1204,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     recentSongImg: sImg,
                                     recHeadColor: blackColor,
                                     recDescColor: recdescColor,
+                                    // icon: Icons.play_circle_fill_outlined,
+                                    widgett: const SizedBox(),
                                     onPressed: () {},
                                     onTap: () {
                                       Navigator.of(context).push(
