@@ -24,7 +24,6 @@ class RecentlyPlayedWidget extends StatefulWidget {
     required this.recDescColor,
     required this.recentAlbumDescText,
     required this.widgett,
-    
   });
   // RecentlyPlayedWidget.fromEmpty({
   //   super.key,
@@ -50,32 +49,57 @@ class _RecentlyPlayedWidgetState extends State<RecentlyPlayedWidget> {
               Container(
                 width: 140,
                 height: 120,
+                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: NetworkImage(widget.recentSongImg),
-                    fit: BoxFit.cover,
-                  ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                child: Stack(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 10),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.22,
-                        child: Text(
-                          widget.recentAlbumText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              const TextStyle(color: whiteColor, fontSize: 10),
-                        ),
+                    ClipRRect(
+                      clipBehavior: Clip.antiAlias,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        widget.recentSongImg,
+                        width: 140,
+                        height: 120,
+                        fit: BoxFit.cover,
+                        // loadingBuilder: (context, child, loadingProgress) {
+                        //   if (loadingProgress == null) {
+                        //     return child;
+                        //   }
+                        //   return Image.asset(
+                        //     'assets/jio_saavn.png',
+                        //     width: 140,
+                        //     height: 120,
+                        //     fit: BoxFit.cover,
+                        //   );
+                        // },
                       ),
                     ),
-                    widget.widgett,
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 10),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.22,
+                              child: Text(
+                                widget.recentAlbumText,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    color: whiteColor, fontSize: 10),
+                              ),
+                            ),
+                          ),
+                          widget.widgett,
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

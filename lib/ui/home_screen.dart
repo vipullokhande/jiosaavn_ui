@@ -1,18 +1,74 @@
+// ignore_for_file: avoid_print
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/controllers/current_song_controller.dart';
+import 'package:jiosaavn_vip/main.dart';
 import 'package:jiosaavn_vip/ui/my_library_screen.dart';
 import 'package:jiosaavn_vip/ui/song_open_screen.dart';
-import 'package:jiosaavn_vip/ui/song_player_screen.dart';
 import 'package:jiosaavn_vip/ui/song_sliver_screen.dart';
 import 'package:jiosaavn_vip/widgets/app_bar_text.dart';
 import 'package:jiosaavn_vip/widgets/recently_played_widget.dart';
 import 'package:jiosaavn_vip/widgets/search_item.dart';
 import 'package:jiosaavn_vip/widgets/single_channel_item_search.dart';
-import 'package:jiosaavn_vip/widgets/song_player.dart';
+
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  print('Title ${message.notification?.title}');
+  print('Title ${message.notification?.body}');
+  print('Title ${message.data}');
+}
+
+handleMesage(RemoteMessage? message, BuildContext context) {
+  if (message == null) return;
+  // navKey.currentState!.pushNamed(
+  //   NotificationScreen.route,
+  //   arguments: message,
+  // );
+}
+
+Future initPushNotifications() async {
+  //For IOS
+  // await FirebaseMessaging.instance
+  //     .setForegroundNotificationPresentationOptions(
+  //       alert: true,
+  //       badge: true,
+  //       sound: true,
+  //     );
+  FirebaseMessaging.instance.getInitialMessage().then((mes) => handleMesage);
+  FirebaseMessaging.onMessageOpenedApp.listen((event) => handleMesage);
+  FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+}
+
+class FirebaseApi {
+  final firebaseMessaging = FirebaseMessaging.instance;
+  Future<void> initNotifications() async {
+    await firebaseMessaging.requestPermission();
+    final fcmToken = await firebaseMessaging.getToken();
+    print('FCM Token $fcmToken');
+    initPushNotifications();
+    //cIC-y05PQjal_fsgJ-5m72:APA91bFx1k321h955SoXZrM_br4hmm9l8kLmiMqlfVpl2dUg0G3QC1VlHrSIT7MM_FzkFQGhSkde4OcHeooAIpRlarglB8c0cbAxe9vDCkLkoRNj6jQXvaSQTtMupaCbT1Gzt6kBIXlG
+    // FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+  }
+}
+
+// class NotificationScreen extends StatelessWidget {
+//   const NotificationScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Text('  GOGL'),
+//       ),
+//     );
+//   }
+// }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,9 +78,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var c = Get.put(CurrentSongController());
+  late CurrentSongController c;
   int internal = 0;
   int index = 0;
+
   List<String> hindiSongs = [
     '01  Zara Sa - www.downloadming.com.mp3',
     'Apna-Bana-Le(PagalWorld).mp3',
@@ -33,6 +90,21 @@ class _HomeScreenState extends State<HomeScreen> {
     'Labon Ko Bhool Bhulaiyaa 128 Kbps.mp3',
     'Maan Meri Jaan_64(PagalWorld.com.pe).mp3',
   ];
+  List<String> englishSongs = [
+    'Baby-Calm-Down(PaglaSongs).mp3',
+    'Ignite---Alan-Walker(PagalWorlld.Com).mp3',
+    'On My Way_64-(WapKing).mp3',
+    'Flower [128 Kbps]-(Pagalworld.gay).mp3',
+    'Cupid-(Twin-Version)(PagalWorlld.Com).mp3',
+  ];
+  List<String> englishSongsImgUrls = [
+    'https://upload.wikimedia.org/wikipedia/en/b/b1/Rema_-_Calm_Down.png',
+    'https://i1.sndcdn.com/artworks-000379252608-a9ujwu-t500x500.jpg',
+    'https://i1.sndcdn.com/artworks-000523641915-lo2qzf-t500x500.jpg',
+    'https://c.saavncdn.com/073/ME-Korean-2023-20230331092858-500x500.jpg',
+    'https://i.scdn.co/image/ab67616d0000b27337c0b3670236c067c8e8bbcb',
+  ];
+
   List<String> hindiSongsImgUrls = [
     'https://i1.sndcdn.com/artworks-000497442375-r9olt2-t500x500.jpg',
     'https://i.ytimg.com/vi/FqchmlJbINs/maxresdefault.jpg',
@@ -175,27 +247,134 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> find = [];
   List<int> findI = [];
   //
+  Duration duration = const Duration();
+  Duration position = const Duration();
+  bool isPlaying = false;
+  bool isPaused = false;
+  bool isRepeat = false;
+
+  List<IconData> icons = [
+    Icons.play_circle_fill,
+    Icons.pause_circle_filled,
+  ];
+  //
   late AudioPlayer audioPlayer;
   @override
   void initState() {
     super.initState();
+    c = Get.find<CurrentSongController>();
     audioPlayer = AudioPlayer();
-    // audioPlayer.onPlayerStateChanged.listen((event) {
-    //   setState(() {
-    //     Get.find<CurrentSongController>().
-    //   });
-    // });
+    // setPlayer(0);
+  }
+
+  setPlayer(int currIndex, int idx) {
+    setState(() {
+      c.index = currIndex;
+      c.isPlay = true;
+      globalIndex = currIndex;
+      audioPlayer.onDurationChanged.listen((event) {
+        setState(() {
+          duration = event;
+          c.changeDuration(event);
+        });
+      });
+      audioPlayer.onPositionChanged.listen((event) {
+        setState(() {
+          position = event;
+          c.changePosition(event);
+        });
+      });
+      audioPlayer.onPlayerComplete.listen((event) {
+        setState(() {
+          // duration = const Duration(seconds: 0);
+          audioPlayer.seek(Duration.zero);
+          if (isRepeat) {
+            isPlaying = true;
+          } else {
+            isPlaying = false;
+            isRepeat = false;
+          }
+        });
+      });
+      AssetSource main = AssetSource(hindiSongs[currIndex]);
+      AssetSource source1 = AssetSource(hindiSongs[currIndex]);
+      AssetSource source2 = AssetSource(englishSongs[currIndex]);
+      switch (idx) {
+        case 0:
+          songPath = hindiSongs[currIndex];
+          songImgPath = hindiSongsImgUrls[currIndex];
+          audioPlayer.setSource(source1);
+          main = source1;
+          break;
+        case 1:
+          songPath = englishSongs[currIndex];
+          songImgPath = englishSongsImgUrls[currIndex];
+          audioPlayer.setSource(source2);
+          main = source2;
+          break;
+        default:
+          songPath = hindiSongs[currIndex];
+          songImgPath = hindiSongsImgUrls[currIndex];
+          audioPlayer.setSource(source1);
+          main = source1;
+          break;
+      }
+      audioPlayer.play(main);
+    });
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    audioPlayer.stop();
+  }
+
+  bool isBS = true;
+  int globalIndex = 0;
+  String songPath = '01  Zara Sa - www.downloadming.com.mp3';
+  String songImgPath =
+      'https://i1.sndcdn.com/artworks-000497442375-r9olt2-t500x500.jpg';
+  // scheduleNotification() async {
+  //     var scheduleNotificationDateAndTime =
+  //         DateTime.now().add(const Duration(seconds: 10));
+  //     AndroidNotificationDetails androidPlatformChannelSpecification =
+  //         const AndroidNotificationDetails(
+  //       'Vipul',
+  //       'MR_VIPUL_21',
+  //       // icon: 'jio_saavn',
+  //       // sound: RawResourceAndroidNotificationSound('omnitrix.mp3'),
+  //     );
+  //     NotificationDetails notificationDetails = NotificationDetails(
+  //       android: androidPlatformChannelSpecification,
+  //     );
+  //     await flutterLocalNotificationsPlugin.show(
+  //       0,
+  //       'VIPUL',
+  //       'FIRST LOCAL NOTIFICATION',
+  //       notificationDetails,
+  //     );
+  //   }
+  @override
   Widget build(BuildContext context) {
-    bool isPlayed = c.isPlay;
+    // bool isPlayed = c.isPlay;
     var editController = TextEditingController();
     var size = MediaQuery.of(context).size;
     var searchController = ScrollController();
     final sController = ScrollController();
-
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: 1,
+              channelKey: 'vip',
+              title: 'First Title',
+              body: 'First Notification',
+            ),
+          );
+        },
+      ),
+
       //
       appBar: index != 1
           ? AppBar(
@@ -380,6 +559,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     controller: sController,
                     scrollDirection: Axis.vertical,
                     children: [
+                      SizedBox(
+                        height: 300,
+                        child: Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                String url = await FirebaseStorage.instance
+                                    .ref()
+                                    .child('hindi_songs')
+                                    .child('Apna-Bana-Le(PagalWorld).mp3')
+                                    .getDownloadURL();
+                                audioPlayer.play(UrlSource(url));
+                              },
+                              child: const Text('Click'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                String url = await FirebaseStorage.instance
+                                    .ref()
+                                    .child('hindi_songs')
+                                    .child('Apna-Bana-Le(PagalWorld).mp3')
+                                    .getDownloadURL();
+                                audioPlayer.play(UrlSource(url));
+                              },
+                              child: const Text('Click'),
+                            ),
+                          ],
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12)
                             .copyWith(top: 16),
@@ -390,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 7),
                               child: Text(
-                                'Recently Played',
+                                'Hindi Songs',
                                 style: TextStyle(
                                     color: blackColor,
                                     fontSize: 20,
@@ -399,76 +607,235 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(
                               height: 180,
-                              child:GetBuilder<CurrentSongController>(
-                                  builder: (con) => ListView.builder(
+                              child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: hindiSongs.length,
                                 shrinkWrap: true,
                                 physics: const ClampingScrollPhysics(),
                                 itemBuilder: (context, index) =>
-                                     RecentlyPlayedWidget(
-                                    recentAlbumText: hindiSongs[index],
-                                    onPressed: () {
-                                      // setState(() {
-                                      //   if (con.isPlay) {
-                                      //     audioPlayer.pause();
-                                      //     con.isPlay = false;
-                                      //   } else {
-                                      //     audioPlayer.play(
-                                      //       AssetSource(
-                                      //         hindiSongs[index],
-                                      //       ),
-                                      //     );
-                                      //     con.isPlay = true;
-                                      //   }
-                                      // });
-                                    },
-                                    onTap: () {
-                                      if (!isPlayed) {
-                                        c.isPlay = true;
-                                      }
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => SongScreen(
-                                            audioPlayer: audioPlayer,
-                                            path: hindiSongs[index],
-                                            index: index,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    onLongPressed: () {},
-                                    recentSongImg: hindiSongsImgUrls[index],
-                                    recHeadColor: blackColor,
-                                    recDescColor: recdescColor,
-                                    recentAlbumDescText: hindiSongs[index],
-                                    widgett: IconButton(
+                                    RecentlyPlayedWidget(
+                                  recentAlbumText: hindiSongs[index],
+                                  onPressed: () {
+                                    // setState(() {
+                                    //   if (con.isPlay) {
+                                    //     audioPlayer.pause();
+                                    //     con.isPlay = false;
+                                    //   } else {
+                                    //     audioPlayer.play(
+                                    //       AssetSource(
+                                    //         hindiSongs[index],
+                                    //       ),
+                                    //     );
+                                    //     con.isPlay = true;
+                                    //   }
+                                    // });
+                                  },
+                                  onTap: () {
+                                    // if (!isPlayed) {
+                                    //   c.isPlay = true;
+                                    // }
+                                    // con.index = index;
+                                    // con.categories[0] = true;
+                                    // con.categories[1] = false;
+                                    // Navigator.of(context).push(
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => SongScreen(
+                                    //       audioPlayer: audioPlayer,
+                                    //       path: hindiSongs[index],
+                                    //       index: index,
+                                    //       img: hindiSongsImgUrls[index],
+                                    //     ),
+                                    //   ),
+                                    // );
+                                  },
+                                  onLongPressed: () {},
+                                  recentSongImg: hindiSongsImgUrls[index],
+                                  recHeadColor: blackColor,
+                                  recDescColor: recdescColor,
+                                  recentAlbumDescText: hindiSongs[index],
+                                  widgett: GetBuilder<CurrentSongController>(
+                                    builder: (con) => IconButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () async {
+                                        // String url = await FirebaseStorage
+                                        //     .instance
+                                        //     .ref()
+                                        //     .child('hindi_songs')
+                                        //     .child(
+                                        //         hindiSongs[index])
+                                        //     .getDownloadURL();
+                                        // audioPlayer.play(UrlSource(url));
+                                        setState(() {
+                                          con.categories[0] = true;
+                                          con.categories[1] = false;
+                                          if (isPaused) {
+                                            setPlayer(index, 0);
+                                            return;
+                                          } else {
+                                            isPlaying = true;
+                                            setPlayer(index, 0);
+                                          }
+                                          // con.index = index;
+                                          globalIndex = index;
+                                          // audioPlayer.play(
+                                          //     AssetSource(hindiSongs[index]));
+                                        });
+                                        //
+                                        // if (con.categories[0]) {
+                                        //   setState(() {
+
+                                        //     // setPlayer(index);
+                                        //     // con.changePathAndTitle(
+                                        //     //   pa: hindiSongs[index],
+                                        //     //   tit: hindiSongs[index],
+                                        //     // );
+                                        //     if (con.isPlay) {
+                                        //       if (con.index != index) {
+                                        //         con.index = index;
+                                        //         audioPlayer.play(AssetSource(
+                                        //             hindiSongs[index]));
+                                        //         return;
+                                        //       }
+                                        //       con.index = index;
+                                        //       audioPlayer.pause();
+                                        //       con.isPlay = false;
+                                        //     } else {
+                                        //       con.isPlay = true;
+                                        //       con.index = index;
+                                        //       audioPlayer.play(
+                                        //         AssetSource(
+                                        //           hindiSongs[index],
+                                        //         ),
+                                        //       );
+                                        //     }
+                                        //   });
+                                        // }
+                                        // setState(() {
+                                        //   con.index = index;
+                                        //   con.categories[0] = true;
+                                        //   con.categories[1] = false;
+                                        // });
+                                      },
+                                      icon: const Icon(
+                                        Icons.play_circle_fill,
+                                        color: whiteColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12)
+                            .copyWith(top: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 7),
+                              child: Text(
+                                'English Songs',
+                                style: TextStyle(
+                                    color: blackColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 180,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: englishSongs.length,
+                                shrinkWrap: true,
+                                physics: const ClampingScrollPhysics(),
+                                itemBuilder: (context, index) =>
+                                    RecentlyPlayedWidget(
+                                  recentAlbumText: englishSongs[index],
+                                  onPressed: () {
+                                    // setState(() {
+                                    //   if (con.isPlay) {
+                                    //     audioPlayer.pause();
+                                    //     con.isPlay = false;
+                                    //   } else {
+                                    //     audioPlayer.play(
+                                    //       AssetSource(
+                                    //         hindiSongs[index],
+                                    //       ),
+                                    //     );
+                                    //     con.isPlay = true;
+                                    //   }
+                                    // });
+                                  },
+                                  onTap: () {
+                                    // if (!isPlayed) {
+                                    //   c.isPlay = true;
+                                    // }
+                                    // con.index = index;
+                                    // con.categories[0] = false;
+                                    // con.categories[1] = true;
+                                    // Navigator.of(context).push(
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => SongScreen(
+                                    //       audioPlayer: audioPlayer,
+                                    //       path: englishSongs[index],
+                                    //       index: index,
+                                    //       img: englishSongsImgUrls[index],
+                                    //     ),
+                                    //   ),
+                                    // );
+                                  },
+                                  onLongPressed: () {},
+                                  recentSongImg: englishSongsImgUrls[index],
+                                  recHeadColor: blackColor,
+                                  recDescColor: recdescColor,
+                                  recentAlbumDescText: englishSongs[index],
+                                  widgett: GetBuilder<CurrentSongController>(
+                                    builder: (con) => IconButton(
                                       padding: EdgeInsets.zero,
                                       onPressed: () {
-                                        setState(() {
-                                          if (con.isPlay) {
-                                            if (con.index != index) {
+                                        con.categories[0] = false;
+                                        con.categories[1] = true;
+                                        if (con.categories[1]) {
+                                          setState(() {
+                                            isBS = true;
+                                            // con.title = englishSongs[index];
+                                            songPath = englishSongs[index];
+                                            // setPlayer(index);
+                                            if (con.isPlay) {
+                                              if (con.index != index) {
+                                                con.index = index;
+                                                audioPlayer.play(AssetSource(
+                                                    englishSongs[index]));
+                                                return;
+                                              }
                                               con.index = index;
-                                              audioPlayer.play(AssetSource(
-                                                  hindiSongs[index]));
-                                              return;
+                                              audioPlayer.pause();
+                                              con.isPlay = false;
+                                            } else {
+                                              con.isPlay = true;
+                                              con.index = index;
+                                              audioPlayer.play(
+                                                AssetSource(
+                                                  englishSongs[index],
+                                                ),
+                                              );
                                             }
-                                            con.index = index;
-                                            audioPlayer.pause();
-                                            con.isPlay = false;
-                                          } else {
-                                            con.isPlay = true;
-                                            con.index = index;
-                                            audioPlayer.play(
-                                              AssetSource(
-                                                hindiSongs[index],
-                                              ),
-                                            );
-                                          }
-                                        });
+                                          });
+                                        }
+                                        // setState(() {
+                                        //   con.index = index;
+                                        //   con.categories[0] = false;
+                                        //   con.categories[1] = true;
+                                        // });
                                       },
                                       icon: Icon(
-                                        con.index == index && con.isPlay
+                                        con.index == index &&
+                                                con.isPlay &&
+                                                con.categories[1]
                                             ? Icons.pause_circle_filled
                                             : Icons.play_circle_fill,
                                         color: whiteColor,
@@ -1588,75 +1955,473 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       //
-      bottomSheet: BottomSheet(
-        backgroundColor: const Color.fromARGB(255, 234, 229, 229),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
-        ),
-        onClosing: () {},
-        builder: (_) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SongPlayerScreen(
-                    imgUrl:
-                        'https://upload.wikimedia.org/wikipedia/en/2/26/Wanted7.jpg',
-                  ),
+      bottomSheet: isBS
+          ? GetBuilder<CurrentSongController>(
+              builder: (controller) => BottomSheet(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
                 ),
-              );
-            },
-            child: SizedBox(
-              height: size.height * 0.065,
-              // color: Colors.red,
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.network(
-                    'https://upload.wikimedia.org/wikipedia/en/2/26/Wanted7.jpg',
-                    fit: BoxFit.cover,
-                    width: size.width * 0.14,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Wanted',
-                        style: TextStyle(
-                          fontSize: 18, color: blackColor,
-                          // fontWeight: FontWeight.w600,
+                onClosing: () {},
+                builder: (_) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isBS = false;
+                      });
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (_) => SongPlayerScreen(
+                      //       audioPlayer: audioPlayer,
+                      //       imgUrl: songImgPath,
+                      //       count: controller.categories[0]
+                      //           ? hindiSongs.length
+                      //           : englishSongs.length,
+                      //       curr: globalIndex,
+                      //       songNames: controller.categories[0]
+                      //           ? hindiSongs
+                      //           : englishSongs,
+                      //       songsImgUrls: controller.categories[0]
+                      //           ? hindiSongsImgUrls
+                      //           : englishSongsImgUrls,
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                    child: SizedBox(
+                      height: size.height * 0.065,
+                      width: size.width,
+                      child: Stack(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.network(
+                                songImgPath,
+                                height: double.maxFinite,
+                                fit: BoxFit.cover,
+                                width: size.width * 0.15,
+                              ),
+                              const Spacer(),
+                              SizedBox(
+                                width: size.width * 0.65,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      songPath,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 18, color: blackColor,
+                                        // fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      songPath,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black54,
+                                        // fontWeight: FontWeight.w200,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {
+                                  // con.categories[0] = true;
+                                  // con.categories[1] = false;
+                                  // if (con.categories[0]) {
+                                  //   setState(() {
+                                  //     if (con.isPlay) {
+                                  //       if (con.index != index) {
+                                  //         con.index = index;
+                                  //         audioPlayer
+                                  //             .play(AssetSource(hindiSongs[index]));
+                                  //         return;
+                                  //       }
+                                  //       con.index = index;
+                                  //       audioPlayer.pause();
+                                  //       con.isPlay = false;
+                                  //     } else {
+                                  //       con.isPlay = true;
+                                  //       con.index = index;
+                                  //       audioPlayer.play(
+                                  //         AssetSource(
+                                  //           hindiSongs[index],
+                                  //         ),
+                                  //       );
+                                  //     }
+                                  //   });
+                                  // }
+                                  setState(() {
+                                    if (isPlaying) {
+                                      // if (controller.categories[0]) {
+                                      //   controller.categories[0] = false;
+                                      // }
+                                      // if (controller.categories[1]) {
+                                      //   controller.categories[1] = false;
+                                      // }
+                                      audioPlayer.pause();
+                                      isPlaying = false;
+                                      controller.isPlay = false;
+                                    } else {
+                                      // if (controller.categories[0]) {
+                                      //   audioPlayer.play(AssetSource(songPath));
+                                      //   isPlaying = true;
+                                      //   controller.isPlay = true;
+                                      //   return;
+                                      // }
+                                      // if (controller.categories[1]) {
+                                      //   audioPlayer.play(AssetSource(songPath));
+                                      //   isPlaying = true;
+                                      //   controller.isPlay = true;
+                                      //   return;
+                                      // }
+                                      isPaused = false;
+                                      audioPlayer.resume();
+                                      isPlaying = true;
+                                      controller.isPlay = true;
+                                    }
+                                  });
+                                },
+                                icon: Icon(
+                                  isPlaying
+                                      ? Icons.pause_circle_filled
+                                      : isPaused
+                                          ? Icons.pause_circle_filled
+                                          : Icons.play_circle_fill,
+                                  size: 40,
+                                  color: blackColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            child: SliderTheme(
+                              data: SliderThemeData(
+                                thumbShape: SliderComponentShape.noThumb,
+                              ),
+                              child: SizedBox(
+                                width: size.width,
+                                height: 1,
+                                child: Slider(
+                                  activeColor: Colors.red,
+                                  inactiveColor: Colors.white,
+                                  min: 0,
+                                  max: duration.inSeconds.toDouble(),
+                                  value: position.inSeconds.toDouble(),
+                                  onChanged: (newValue) {
+                                    audioPlayer.seek(
+                                      Duration(
+                                        seconds: newValue.toInt(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
+          : BottomSheet(
+              onClosing: () {},
+              builder: (context) {
+                return PopScope(
+                  canPop: true,
+                  onPopInvoked: (didPop) {
+                    // isPlayingg();
+                  },
+                  child: Scaffold(
+                    appBar: AppBar(
+                      leading: IconButton(
+                        onPressed: () {
+                          // isPlayingg();
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(
+                          Icons.close,
                         ),
                       ),
-                      Text(
-                        'wanted',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                          // fontWeight: FontWeight.w200,
+                      actions: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.menu,
+                          ),
                         ),
+                      ],
+                    ),
+                    body: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: size.height * 0.1,
+                          ),
+                          SizedBox(
+                            height: size.height * 0.4,
+                            width: size.width,
+                            child: PageView.builder(
+                              // controller: pageController2,
+                              itemCount: 2,
+                              onPageChanged: (v) {
+                                // setState(() {
+                                //   index = v;
+                                //   pageController2.jumpToPage(v);
+                                //   pageController.jumpToPage(v);
+                                //   isPlaying = true;
+                                //   widget.audioPlayer.stop().then((value) {
+                                //     setState(() {
+                                //       widget.audioPlayer.play(
+                                //         AssetSource(
+                                //           widget.songNames[v],
+                                //         ),
+                                //       );
+                                //     });
+                                //   });
+                                // });
+                              },
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (_, idex) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.network(
+                                    hindiSongsImgUrls[index],
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
+                            ),
+                            //     CarouselSlider.builder(
+                            //   itemCount: widget.songsImgUrls.length,
+                            //   carouselController: carouselController,
+                            //   itemBuilder: (_, idx, realIndex) {
+                            //     return Image.network(
+                            //       widget.songsImgUrls[idx],
+                            //       fit: BoxFit.cover,
+                            //     );
+                            //   },
+                            //   options: CarouselOptions(
+                            //     viewportFraction: 0.65,
+                            //     aspectRatio: 0.9,
+                            //     scrollDirection: Axis.horizontal,
+                            //     onPageChanged: (idx, reason) {
+                            //       setState(() {
+                            //         index = idx;
+                            //         pageController.jumpToPage(index);
+                            //       });
+                            //     },
+                            //   ),
+                            // ),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.04,
+                          ),
+                          SizedBox(
+                            height: 100,
+                            child: PageView.builder(
+                              // controller: pageController,
+                              scrollDirection: Axis.horizontal,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: 2,
+                              itemBuilder: (context, index) => SizedBox(
+                                width: size.width,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: size.width * 0.75,
+                                        child: const Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              ' widget.songNames[index]',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 18, color: blackColor,
+                                                // fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Text(
+                                              ' widget.songNames[index]',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54,
+                                                // fontWeight: FontWeight.w200,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.more_vert_rounded,
+                                          size: 35,
+                                          color: blackColor,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Slider(
+                            min: 0,
+                            max: duration.inSeconds.toDouble(),
+                            value: position.inSeconds.toDouble(),
+                            label:
+                                '${position.toString().split('.')[0].split(':')[1]} : ${position.toString().split('.')[0].split(':')[2]}',
+                            activeColor: Colors.pink.shade600,
+                            thumbColor: Colors.pink.shade500,
+                            inactiveColor: Colors.pink.shade200,
+                            onChanged: (v) {
+                              setState(() {
+                                audioPlayer.seek(Duration(seconds: v.toInt()));
+                              });
+                            },
+                          ),
+                          GetBuilder<CurrentSongController>(
+                            builder: (currSongController) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    currSongController.position
+                                        .toString()
+                                        .split('.')[0],
+                                  ),
+                                  Text(
+                                    currSongController.duration
+                                        .toString()
+                                        .split('.')[0],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.02,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.favorite_border,
+                                  size: 35,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  // index -= 1;
+                                  // if (index >= 0) {
+                                  //   setState(() {
+                                  //     // _currentSongController.index = index;
+                                  //     // _currentSongController.songTitle =
+                                  //     //     widget.songNames[index];
+                                  //     // _currentSongController.songImgPath =
+                                  //     //     widget.songNames[index];
+                                  //     pageController2.jumpToPage(index);
+                                  //     pageController.jumpToPage(index);
+                                  //     setPlayer(index);
+                                  //   });
+                                  // }
+                                },
+                                icon: const Icon(
+                                  Icons.arrow_back_ios,
+                                  size: 35,
+                                ),
+                              ),
+                              GetBuilder<CurrentSongController>(
+                                builder: (cSC) => IconButton(
+                                  onPressed: () {
+                                    // if (cSC.isPlay) {
+                                    //   cSC.isPlay = false;
+                                    //   cSC.index = index;
+                                    //   widget.audioPlayer.pause();
+                                    // }
+                                    setState(() {
+                                      if (isPlaying) {
+                                        isPlaying = false;
+                                        audioPlayer.pause();
+                                      } else {
+                                        isPlaying = true;
+                                        // setPlayer(index);
+                                      }
+                                    });
+                                  },
+                                  icon: Icon(
+                                    isPlaying
+                                        ? Icons.pause_circle_filled
+                                        : Icons.play_circle_fill,
+                                    size: 65,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  index += 1;
+                                  // if (index < widget.songNames.length) {
+                                  //   setState(() {
+                                  //     // _currentSongController.index = index;
+                                  //     // _currentSongController.songTitle =
+                                  //     //     widget.songNames[index];
+                                  //     // _currentSongController.songImgPath =
+                                  //     //     widget.songNames[index];
+                                  //     pageController2.jumpToPage(index);
+                                  //     pageController.jumpToPage(index);
+                                  //     setPlayer(index);
+                                  //   });
+                                  // }
+                                },
+                                icon: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 35,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.music_note_outlined,
+                                  size: 35,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const Spacer(),
-                  const IconButton(
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.play_arrow,
-                      size: 35,
-                      color: blackColor,
                     ),
                   ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+                );
+              }),
     );
   }
 }
