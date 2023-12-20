@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/controllers/current_song_controller.dart';
-import 'package:jiosaavn_vip/main.dart';
 import 'package:jiosaavn_vip/ui/my_library_screen.dart';
 import 'package:jiosaavn_vip/ui/song_open_screen.dart';
 import 'package:jiosaavn_vip/ui/song_sliver_screen.dart';
