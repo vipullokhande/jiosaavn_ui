@@ -1,14 +1,21 @@
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:jiosaavn_vip/colors.dart';
 
 // ignore: must_be_immutable
 class SongSliverScreen extends StatefulWidget {
+  AudioPlayer audioPlayer;
+  List<String> songTitles;
+  List<String> songImg;
   String sTitle;
   String sName;
   String sImg;
   SongSliverScreen({
     super.key,
+    required this.audioPlayer,
+    required this.songTitles,
+    required this.songImg,
     required this.sTitle,
     required this.sName,
     required this.sImg,
@@ -29,6 +36,7 @@ class _SongSliverScreenState extends State<SongSliverScreen> {
         slivers: [
           SliverPersistentHeader(
             delegate: CustomSliverAppbarDelegate(
+              audioPlayer: widget.audioPlayer,
               expandedHeight: MediaQuery.of(context).size.height * 0.5,
               sTitle: widget.sTitle,
               sName: widget.sName,
@@ -46,30 +54,47 @@ class _SongSliverScreenState extends State<SongSliverScreen> {
                 // crossAxisSpacing: 7,
               ),
               delegate: SliverChildBuilderDelegate(
-                childCount: 20,
+                childCount: widget.songTitles.length,
                 (context, index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 7),
-                    child: Column(
-                      children: [
-                        Flexible(
-                          flex: 9,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              widget.sImg,
-                              fit: BoxFit.cover,
-                              width: double.maxFinite,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => SongSliverScreen(
+                              audioPlayer: widget.audioPlayer,
+                              songTitles: widget.songTitles,
+                              songImg: widget.songImg,
+                              sTitle: widget.songTitles[index],
+                              sName: widget.songTitles[index],
+                              sImg: widget.songImg[index],
                             ),
                           ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Text(
-                            widget.sTitle,
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          Flexible(
+                            flex: 9,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.network(
+                                widget.songImg[index],
+                                fit: BoxFit.cover,
+                                height: double.maxFinite,
+                                width: double.maxFinite,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                          Flexible(
+                            flex: 1,
+                            child: Text(
+                              widget.songTitles[index],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -129,11 +154,13 @@ class CustomSliverAppbarDelegate extends SliverPersistentHeaderDelegate {
     Colors.pink.shade200,
   ];
   var random = Random().nextInt(6);
+  AudioPlayer audioPlayer;
   double expandedHeight;
   String sName;
   String sTitle;
   String sImg;
   CustomSliverAppbarDelegate({
+    required this.audioPlayer,
     required this.expandedHeight,
     required this.sName,
     required this.sTitle,
@@ -274,6 +301,8 @@ class CustomSliverAppbarDelegate extends SliverPersistentHeaderDelegate {
                               padding: const EdgeInsets.all(15.0),
                               child: Text(
                                 sTitle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500,

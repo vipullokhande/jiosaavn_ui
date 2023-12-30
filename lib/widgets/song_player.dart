@@ -1,264 +1,492 @@
-// import 'package:audioplayers/audioplayers.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:jiosaavn_vip/controllers/current_song_controller.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:jiosaavn_vip/ui/favourite_screen.dart';
 
-// // ignore: must_be_immutable
-// class SongScreen extends StatefulWidget {
-//   final AudioPlayer audioPlayer;
-//   final String path;
-//   final String img;
-//   int index;
-//   SongScreen({
-//     super.key,
-//     required this.audioPlayer,
-//     required this.path,
-//     required this.index,
-//     required this.img,
-//   });
+import '../colors.dart';
+import '../controllers/current_song_controller.dart';
 
-//   @override
-//   State<SongScreen> createState() => _SongScreenState();
-// }
+class SongPlayer extends StatefulWidget {
+  final List<String> img;
+  final List<String> song;
+  final AudioPlayer audioPlayer;
+  const SongPlayer({
+    super.key,
+    required this.img,
+    required this.song,
+    required this.audioPlayer,
+  });
 
-// class _SongScreenState extends State<SongScreen> {
-//   Duration duration = const Duration();
-//   Duration position = const Duration();
-//   bool isPlaying = false;
-//   bool isPaused = false;
-//   bool isRepeat = false;
-//   List<IconData> icons = [
-//     Icons.play_circle_fill,
-//     Icons.pause_circle_filled,
-//   ];
-//   @override
-//   void initState() {
-//     super.initState();
-//     initialize();
-//   }
+  @override
+  State<SongPlayer> createState() => _SongPlayerState();
+}
 
-//   initialize() {
-//     if (Get.find<CurrentSongController>().categories[0]) {
-//       //
-//     } else if (Get.find<CurrentSongController>().categories[1]) {
-//       //
-//     } else {
-//       setPlayer();
-//     }
-//   }
+class _SongPlayerState extends State<SongPlayer> {
+  int index = 0;
+  var c = Get.find<CurrentSongController>();
+  setPlayer(int currIndex) {
+    setState(() {
+      c.isPlay = true;
+      widget.audioPlayer.onDurationChanged.listen((event) {
+        setState(() {
+          c.duration = event;
+        });
+      });
+      widget.audioPlayer.onPositionChanged.listen((event) {
+        setState(() {
+          c.position = event;
+        });
+      });
+      widget.audioPlayer.onPlayerComplete.listen((event) {
+        setState(() {
+          widget.audioPlayer.seek(Duration.zero);
+        });
+      });
+      AssetSource main = AssetSource(widget.song[currIndex]);
+      widget.audioPlayer.setSource(main);
+      widget.audioPlayer.play(main);
+    });
+  }
 
-//   setPlayer() {
-//     setState(() {
-//       Get.find<CurrentSongController>().index = widget.index;
-//       Get.find<CurrentSongController>().isPlay = false;
-//       widget.audioPlayer.onDurationChanged.listen((event) {
-//         setState(() {
-//           duration = event;
-//         });
-//       });
-//       widget.audioPlayer.onPositionChanged.listen((event) {
-//         setState(() {
-//           position = event;
-//         });
-//       });
-//       widget.audioPlayer.setSource(AssetSource(widget.path));
-//       widget.audioPlayer.onPlayerComplete.listen((event) {
-//         setState(() {
-//           // duration = const Duration(seconds: 0);
-//           widget.audioPlayer.seek(Duration.zero);
-//           if (isRepeat) {
-//             isPlaying = true;
-//           } else {
-//             isPlaying = false;
-//             isRepeat = false;
-//           }
-//         });
-//       });
-//       widget.audioPlayer.play(AssetSource(widget.path));
-//       Get.find<CurrentSongController>().isPlay = false;
-//     });
-//   }
+  late PageController pageController1 = PageController();
+  late PageController pageController2 = PageController();
+  @override
+  void initState() {
+    super.initState();
+    pageController1 = PageController(
+      initialPage: c.index,
+      viewportFraction: 0.8,
+    );
+    pageController2 = PageController(
+      initialPage: c.index,
+    );
+    setPlayer(c.index);
+    index = c.index;
+  }
 
-//   @override
-//   void dispose() {
-//     // widget.audioPlayer.stop();
-//     // setState(() {
-//     //   isPlaying = false;
-//     //   isPaused = false;
-//     //   isRepeat = false;
-//     // });
-//     super.dispose();
-//     if (Get.find<CurrentSongController>().categories[0]) {
-//       //
-//       Get.find<CurrentSongController>().categories[1] = false;
-//     } else if (Get.find<CurrentSongController>().categories[1]) {
-//       //
-//       Get.find<CurrentSongController>().categories[0] = false;
-//     }
-//   }
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return GetBuilder<CurrentSongController>(
-//       builder: (con) => PopScope(
-//         canPop: true,
-//         onPopInvoked: (didPop) {
-//           setState(() {
-//             if (isPlaying) {
-//               if (Get.find<CurrentSongController>().categories[0]) {
-//                 Get.find<CurrentSongController>().categories[0] = true;
-//                 Get.find<CurrentSongController>().categories[1] = false;
-//               }
-//               if (Get.find<CurrentSongController>().categories[1]) {
-//                 Get.find<CurrentSongController>().categories[1] = true;
-//                 Get.find<CurrentSongController>().categories[0] = false;
-//               }
-//             } else {
-//               if (Get.find<CurrentSongController>().categories[0]) {
-//                 Get.find<CurrentSongController>().categories[0] = true;
-//                 Get.find<CurrentSongController>().categories[1] = false;
-//               }
-//               if (Get.find<CurrentSongController>().categories[1]) {
-//                 Get.find<CurrentSongController>().categories[1] = true;
-//                 Get.find<CurrentSongController>().categories[0] = false;
-//               }
-//             }
-//           });
-//         },
-//         child: Scaffold(
-//           body: Container(
-//             margin:
-//                 const EdgeInsets.symmetric(horizontal: 10).copyWith(top: 100),
-//             child: Column(
-//               children: [
-//                 ClipRRect(
-//                   clipBehavior: Clip.antiAlias,
-//                   borderRadius: BorderRadius.circular(12),
-//                   child: Image.network(
-//                     widget.img,
-//                     height: 200,
-//                     width: double.maxFinite,
-//                     fit: BoxFit.cover,
-//                     // loadingBuilder: (context, child, loadingProgress) {
-//                     //   if (loadingProgress == null) {
-//                     //     child;
-//                     //   }
-//                     //   return Image.asset(
-//                     //     'assets/jio_saavn.png',
-//                     //     height: 200,
-//                     //     width: double.maxFinite,
-//                     //     fit: BoxFit.cover,
-//                     //   );
-//                     // },
-//                   ),
-//                 ),
-//                 Slider(
-//                   activeColor: Colors.red,
-//                   inactiveColor: Colors.grey,
-//                   min: 0.0,
-//                   max: duration.inSeconds.toDouble(),
-//                   value: position.inSeconds.toDouble(),
-//                   onChanged: (valuee) {
-//                     setState(() {
-//                       widget.audioPlayer
-//                           .seek(Duration(seconds: valuee.toInt()));
-//                     });
-//                   },
-//                 ),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                   children: [
-//                     IconButton(
-//                       onPressed: () {
-//                         // setPlayer();
-//                         if (!isRepeat) {
-//                           widget.audioPlayer.setReleaseMode(ReleaseMode.loop);
-//                           setState(() {
-//                             isRepeat = true;
-//                           });
-//                         } else {
-//                           widget.audioPlayer
-//                               .setReleaseMode(ReleaseMode.release);
-//                           setState(() {
-//                             isRepeat = false;
-//                           });
-//                         }
-//                       },
-//                       icon: Icon(
-//                         Icons.repeat_rounded,
-//                         color: isRepeat ? Colors.red : Colors.black,
-//                       ),
-//                     ),
-//                     Text(position.toString().split('.')[0]),
-//                     IconButton(
-//                       onPressed: () {
-//                         widget.audioPlayer.stop();
-//                         if (!con.isPlay) {
-//                           setPlayer();
-//                         } else if (con.categories[0] &&
-//                             con.index == widget.index &&
-//                             con.isPlay) {
-//                           setState(() {
-//                             widget.audioPlayer.stop();
-//                             con.isPlay = false;
-//                           });
-//                           //
-//                         } else if (con.categories[1] &&
-//                             con.index == widget.index &&
-//                             con.isPlay) {
-//                           setState(() {
-//                             widget.audioPlayer.stop();
-//                             con.isPlay = false;
-//                           });
-//                           //
-//                         }
-//                         // setState(() {
-//                         //   if (con.isPlay) {
-//                         //     if (con.index != widget.index) {
-//                         //       con.index = widget.index;
-//                         //       widget.audioPlayer.play(AssetSource(
-//                         //         widget.path,
-//                         //       ));
-//                         //       return;
-//                         //     }
-//                         //     con.index = widget.index;
-//                         //     widget.audioPlayer.pause();
-//                         //     con.isPlay = false;
-//                         //   } else {
-//                         //     con.isPlay = true;
-//                         //     con.index = widget.index;
-//                         //     widget.audioPlayer.play(
-//                         //       AssetSource(
-//                         //         widget.path,
-//                         //       ),
-//                         //     );
-//                         //   }
-//                         // });
-//                       },
-//                       icon: Icon(
-//                         con.index == widget.index &&
-//                                 con.isPlay &&
-//                                 con.categories[0]
-//                             ? con.index == widget.index &&
-//                                     con.isPlay &&
-//                                     con.categories[1]
-//                                 ? Icons.pause_circle_filled
-//                                 : Icons.pause_circle_filled
-//                             : Icons.play_circle_fill,
-//                         size: 50,
-//                       ),
-//                     ),
-//                     Text(duration.toString().split('.')[0]),
-//                     SizedBox(
-//                       width: MediaQuery.of(context).size.width * 0.1,
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
+        setState(() {
+          c.songTitle = widget.song[index];
+          c.songImgPath = widget.img[index];
+          c.index = index;
+        });
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: const SizedBox(),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Get.to(FavouriteScreen(
+                  audioPlayer: widget.audioPlayer,
+                ));
+              },
+              icon: const Icon(
+                Icons.favorite_border,
+              ),
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: size.height * 0.1,
+              ),
+              GetBuilder<CurrentSongController>(
+                builder: (cSC) => SizedBox(
+                  height: size.height * 0.4,
+                  width: size.width,
+                  child: PageView.builder(
+                    controller: pageController1,
+                    itemCount: widget.song.length,
+                    onPageChanged: (v) {
+                      setState(() {
+                        pageController1.jumpToPage(v);
+                        pageController2.jumpToPage(v);
+                        setPlayer(v);
+                        index = v;
+                        c.index = v;
+                      });
+                    },
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (_, idex) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.network(
+                          widget.img[idex],
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                  ),
+                  //     CarouselSlider.builder(
+                  //   itemCount: widget.songsImgUrls.length,
+                  //   carouselController: carouselController,
+                  //   itemBuilder: (_, idx, realIndex) {
+                  //     return Image.network(
+                  //       widget.songsImgUrls[idx],
+                  //       fit: BoxFit.cover,
+                  //     );
+                  //   },
+                  //   options: CarouselOptions(
+                  //     viewportFraction: 0.65,
+                  //     aspectRatio: 0.9,
+                  //     scrollDirection: Axis.horizontal,
+                  //     onPageChanged: (idx, reason) {
+                  //       setState(() {
+                  //         index = idx;
+                  //         pageController.jumpToPage(index);
+                  //       });
+                  //     },
+                  //   ),
+                  // ),
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.04,
+              ),
+              SizedBox(
+                height: 100,
+                child: PageView.builder(
+                  controller: pageController2,
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.song.length,
+                  itemBuilder: (context, index) => SizedBox(
+                    width: size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: size.width * 0.75,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  widget.song[index],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 18, color: blackColor,
+                                    // fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  widget.song[index],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                    // fontWeight: FontWeight.w200,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.more_vert_rounded,
+                              size: 35,
+                              color: blackColor,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                height: size.height * 0.075,
+                width: double.maxFinite,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      widget.img[index],
+                    ),
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+                child: SizedBox.expand(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text(
+                        'Video Available',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                      TextButton.icon(
+                        style: TextButton.styleFrom(
+                          fixedSize: Size(size.width * 0.38, 40),
+                          backgroundColor: Colors.white,
+                          shape: const StadiumBorder(),
+                        ),
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.videocam_rounded,
+                          color: Colors.cyan,
+                        ),
+                        label: const Text(
+                          'Switch to Video',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              GetBuilder<CurrentSongController>(
+                builder: (csc) => SizedBox(
+                  height: 3,
+                  child: Slider(
+                    min: 0,
+                    max: csc.duration.inSeconds.toDouble(),
+                    value: csc.position.inSeconds.toDouble(),
+                    label:
+                        '${csc.position.toString().split('.')[0].split(':')[1]} : ${csc.position.toString().split('.')[0].split(':')[2]}',
+                    activeColor: Colors.pink.shade600,
+                    thumbColor: Colors.pink.shade500,
+                    inactiveColor: Colors.pink.shade200,
+                    onChanged: (v) {
+                      setState(() {
+                        widget.audioPlayer.seek(Duration(seconds: v.toInt()));
+                      });
+                    },
+                  ),
+                ),
+              ),
+              GetBuilder<CurrentSongController>(
+                builder: (csc) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${csc.position.toString().split('.')[0].split(':')[1]}:${csc.position.toString().split('.')[0].split(':')[2]}',
+                      ),
+                      Text(
+                        '${csc.duration.toString().split('.')[0].split(':')[1]}:${csc.duration.toString().split('.')[0].split(':')[2]}',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GetBuilder<CurrentSongController>(
+                    builder: (con) => IconButton(
+                      onPressed: () {
+                        if (!con.favList.contains(widget.song[index])) {
+                          con.addToFavourite(
+                            widget.song[index],
+                            context,
+                          );
+                        } else {
+                          con.removeFromFavourite(
+                            widget.song[index],
+                            context,
+                          );
+                        }
+                        setState(() {});
+                      },
+                      icon: Icon(
+                        con.favList.contains(
+                          widget.song[index],
+                        )
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        size: 35,
+                        color: con.favList.contains(widget.song[index])
+                            ? Colors.red
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        if (index <= 0) {
+                          return;
+                        }
+                        index -= 1;
+                        c.index = index;
+                        pageController1.jumpToPage(index);
+                        pageController2.jumpToPage(index);
+                        widget.audioPlayer.stop().then((value) {
+                          widget.audioPlayer
+                              .play(AssetSource(widget.song[index]));
+                        });
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 35,
+                    ),
+                  ),
+                  GetBuilder<CurrentSongController>(
+                    builder: (cSC) => IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (cSC.isPlay) {
+                            cSC.isPlay = false;
+                            widget.audioPlayer.pause();
+                          } else {
+                            cSC.isPlay = true;
+                            widget.audioPlayer.resume();
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        cSC.isPlay
+                            ? Icons.pause_circle_filled
+                            : Icons.play_circle_fill,
+                        size: 65,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        if (index == widget.song.length - 1) {
+                          return;
+                        }
+                        index += 1;
+                        c.index = index;
+                        pageController1.jumpToPage(index);
+                        pageController2.jumpToPage(index);
+                        widget.audioPlayer.stop().then((value) {
+                          widget.audioPlayer
+                              .play(AssetSource(widget.song[index]));
+                        });
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 35,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.white,
+                        builder: (context) => Container(
+                          alignment: Alignment.topCenter,
+                          height: size.height * 0.7,
+                          width: double.maxFinite,
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              SizedBox(
+                                height: size.height * 0.1,
+                                width: size.width * 0.95,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Image.network(
+                                      widget.img[index],
+                                      height: size.height * 0.1,
+                                      width: size.width * 0.2,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    SizedBox(
+                                      width: size.width * 0.5,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            widget.song[index],
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Text(
+                                            widget.song[index],
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                              color: Color.fromARGB(
+                                                  255, 74, 74, 74),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.play_circle_filled_outlined,
+                                      color: Colors.teal,
+                                      size: 50,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  foregroundColor: Colors.white,
+                                  fixedSize: Size(size.width * 0.9, 50),
+                                ),
+                                onPressed: () {},
+                                child: const Text(
+                                  'Set JioTune',
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.music_note_outlined,
+                      size: 35,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
