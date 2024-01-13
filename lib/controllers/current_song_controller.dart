@@ -1,5 +1,7 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SongModel {
   String title;
@@ -14,6 +16,22 @@ class CurrentSongController extends GetxController {
   bool isPlay = false;
   int index = 0;
   List<String> favList = [];
+  int categoryy = 0;
+  late AudioPlayer audioPlayerr;
+  @override
+  void onInit() async {
+    super.onInit();
+    songTitle = getSong();
+    songImgPath = getImg();
+    categoryy = getCategory();
+    audioPlayerr = AudioPlayer();
+  }
+
+  changePlayer(AudioPlayer audioPlayer) {
+    audioPlayerr = audioPlayer;
+    update();
+  }
+
   addToFavourite(String title, BuildContext context) {
     favList.add(title);
     update();
@@ -72,12 +90,37 @@ class CurrentSongController extends GetxController {
     );
   }
 
-  String songTitle = '01  Zara Sa - www.downloadming.com.mp3';
-  String songImgPath =
-      'https://i1.sndcdn.com/artworks-000497442375-r9olt2-t500x500.jpg';
-  changePathAndTitle({required String sIP, required String sT}) {
+  getCategory() async {
+    final sf = await SharedPreferences.getInstance();
+    return sf.getInt('category');
+  }
+
+  getSong() async {
+    final sf = await SharedPreferences.getInstance();
+    return sf.getString('song');
+  }
+
+  getImg() async {
+    final sf = await SharedPreferences.getInstance();
+    return sf.getString('img');
+  }
+
+  String songTitle = 'Apna-Bana-Le(PagalWorld).mp3';
+  String songImgPath = 'https://i.ytimg.com/vi/FqchmlJbINs/maxresdefault.jpg';
+  changePathAndTitleAndCategory(
+      {required String sIP, required String sT, required int category}) {
     // songImgPath = sIP;
+    songTitle = sT;
     // songTitle = sT;
+    songImgPath = sIP;
+    for (var i = 0; i < categories.length; i++) {
+      if (i == category) {
+        categories[i] = true;
+      } else {
+        categories[i] = false;
+      }
+    }
+    categoryy = category;
     update();
   }
 

@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:jiosaavn_vip/authenticatiion/screens/splash_screen.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/firebase_options.dart';
 import 'package:jiosaavn_vip/ui/home_screen.dart';
@@ -86,12 +87,12 @@ class _MyAppState extends State<MyApp> {
           NotificationController.onNotificationDisplayedMethod,
     );
     super.initState();
+    Get.put(CurrentSongController());
   }
 
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
-    var c = Get.put(CurrentSongController());
     return GetMaterialApp(
       title: 'JioSaavn UI',
       // navigatorKey: navKey,
@@ -117,7 +118,7 @@ class _MyAppState extends State<MyApp> {
           bottomSheetTheme: const BottomSheetThemeData(
             backgroundColor: whiteColor,
           )),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }

@@ -42,7 +42,7 @@ class MyLibraryScreen extends StatelessWidget {
                   offset: Offset(6, 12),
                 ),
               ],
-              color: const Color.fromARGB(255, 237, 237, 237),
+              color: const Color.fromRGBO(240, 225, 225, 1),
               borderRadius: BorderRadius.circular(14),
             ),
             height: size.height * 0.5,

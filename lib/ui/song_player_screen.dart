@@ -110,6 +110,10 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
         _currentSongController.index = index;
         _currentSongController.isPlay = true;
         _currentSongController.songTitle = widget.songNames[index];
+        _currentSongController.changePathAndTitleAndCategory(
+            sIP: widget.songsImgUrls[index],
+            sT: widget.songNames[index],
+            category: _currentSongController.categoryy);
         _currentSongController.songImgPath = widget.songsImgUrls[index];
         return;
       }

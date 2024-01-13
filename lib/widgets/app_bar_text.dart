@@ -17,30 +17,33 @@ class AppBarText extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-              color: fontcolor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                color: fontcolor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-            alignment: Alignment.center,
-            // padding: const EdgeInsets.symmetric(
-            //   vertical: 5,
-            //   horizontal: 8,
-            // ),
-            height: 6,
-            width: 75,
-            color: dividercolor,
-            child: const SizedBox(),
-          )
-        ],
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+              alignment: Alignment.center,
+              // padding: const EdgeInsets.symmetric(
+              //   vertical: 5,
+              //   horizontal: 8,
+              // ),
+              height: 4,
+              width: 75,
+              color: dividercolor,
+              child: const SizedBox(),
+            )
+          ],
+        ),
       ),
     );
   }

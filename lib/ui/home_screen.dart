@@ -7,14 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/controllers/current_song_controller.dart';
+import 'package:jiosaavn_vip/ui/jiosaavn_pro_screen.dart';
 import 'package:jiosaavn_vip/ui/my_library_screen.dart';
 import 'package:jiosaavn_vip/ui/song_open_screen.dart';
 import 'package:jiosaavn_vip/ui/song_sliver_screen.dart';
 import 'package:jiosaavn_vip/widgets/app_bar_text.dart';
+import 'package:jiosaavn_vip/widgets/jio_tunes_widget.dart';
 import 'package:jiosaavn_vip/widgets/recently_played_widget.dart';
 import 'package:jiosaavn_vip/widgets/search_item.dart';
 import 'package:jiosaavn_vip/widgets/single_channel_item_search.dart';
 import 'package:jiosaavn_vip/widgets/song_player.dart';
+import 'package:jiosaavn_vip/widgets/trending_jiotunes_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
   print('Title ${message.notification?.title}');
@@ -79,7 +83,37 @@ class _HomeScreenState extends State<HomeScreen> {
   late CurrentSongController c;
   int internal = 0;
   int index = 0;
+  List<Color> c0 = [
+    Colors.white,
+    Colors.pink.shade100,
+    Colors.pink.shade300,
+  ];
 
+  List<Color> c1 = [
+    Colors.white,
+    Colors.teal.shade100,
+    Colors.teal.shade300,
+  ];
+  List<Color> c2 = [
+    Colors.white,
+    Colors.red.shade100,
+    Colors.red.shade300,
+  ];
+  List<Color> c3 = [
+    Colors.white,
+    Colors.green.shade100,
+    Colors.green.shade300,
+  ];
+  List<Color> c4 = [
+    Colors.white,
+    Colors.purple.shade100,
+    Colors.purple.shade300,
+  ];
+  List<Color> c5 = [
+    Colors.white,
+    Colors.orange.shade100,
+    Colors.orange.shade300,
+  ];
   List<String> hindiSongs = [
     '01  Zara Sa - www.downloadming.com.mp3',
     'Apna-Bana-Le(PagalWorld).mp3',
@@ -257,15 +291,42 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   //
   late AudioPlayer audioPlayer;
+
   @override
   void initState() {
     super.initState();
     c = Get.find<CurrentSongController>();
     audioPlayer = AudioPlayer();
+    setInitialData();
     // setPlayer(0);
   }
 
-  setPlayer(int currIndex, int idx) {
+  // String songTitle = '';
+  // String songImg = '';
+  // int category = 0;
+  // int idx = 0;
+  // setInitialData() async {
+  //   final sf = await SharedPreferences.getInstance();
+  //   songTitle = sf.getString('song') ?? c.songTitle;
+  //   songImg = sf.getString('img') ?? c.songImgPath;
+  //   category = sf.getInt('category') ?? 0;
+  //   idx = sf.getInt('index') ?? 0;
+  // }
+  setInitialData() async {
+    final sf = await SharedPreferences.getInstance();
+    c.changePathAndTitleAndCategory(
+      sIP: sf.getString('img') ?? '',
+      sT: sf.getString('song') ?? '',
+      category: sf.getInt('category') ?? 0,
+    );
+  }
+
+  setPlayer(int currIndex, int idx) async {
+    final sf = await SharedPreferences.getInstance();
+    String song = sf.getString('song') ?? '';
+    // String img = sf.getString('img') ?? '';
+    // c.songImgPath = img;
+    int category = sf.getInt('category') ?? 0;
     setState(() {
       c.index = currIndex;
       c.isPlay = true;
@@ -293,35 +354,13 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         });
       });
-      AssetSource main = AssetSource(hindiSongs[currIndex]);
-      AssetSource source1 = AssetSource(hindiSongs[currIndex]);
-      AssetSource source2 = AssetSource(englishSongs[currIndex]);
-      switch (idx) {
-        case 0:
-          // songPath = hindiSongs[currIndex];
-          // songImgPath = hindiSongsImgUrls[currIndex];
-          audioPlayer.setSource(source1);
-          c.songTitle = hindiSongs[currIndex];
-          c.songImgPath = hindiSongsImgUrls[currIndex];
-          main = source1;
-          break;
-        case 1:
-          // songPath = englishSongs[currIndex];
-          // songImgPath = englishSongsImgUrls[currIndex];
-          audioPlayer.setSource(source2);
-          c.songTitle = englishSongs[currIndex];
-          c.songImgPath = englishSongsImgUrls[currIndex];
-          main = source2;
-          break;
-        default:
-          // songPath = hindiSongs[currIndex];
-          // songImgPath = hindiSongsImgUrls[currIndex];
-          audioPlayer.setSource(source1);
-          c.songTitle = hindiSongs[currIndex];
-          c.songImgPath = hindiSongsImgUrls[currIndex];
-          main = source1;
-          break;
+      AssetSource main = AssetSource(song);
+      if (category == 0) {
+        main = AssetSource(song);
+      } else {
+        main = AssetSource(song);
       }
+      audioPlayer.setSource(main);
       audioPlayer.play(main);
     });
   }
@@ -333,6 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool isBS = true;
+
   // String songPath = '01  Zara Sa - www.downloadming.com.mp3';
   // String songImgPath =
   //     'https://i1.sndcdn.com/artworks-000497442375-r9olt2-t500x500.jpg';
@@ -507,6 +547,9 @@ class _HomeScreenState extends State<HomeScreen> {
       //
       appBar: index != 1
           ? AppBar(
+              backgroundColor: index != 3
+                  ? Colors.white
+                  : const Color.fromARGB(255, 42, 45, 54),
               title: index == 2
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10)
@@ -520,48 +563,65 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   : Row(
-                      children: [
-                        AppBarText(
-                          text: 'Music',
-                          fontcolor:
-                              internal == 0 ? Colors.black : Colors.black54,
-                          dividercolor:
-                              internal == 0 ? Colors.black : Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              internal = 0;
-                            });
-                          },
-                        ),
-                        AppBarText(
-                          text: 'Podcasts',
-                          fontcolor:
-                              internal == 1 ? Colors.black : Colors.black54,
-                          dividercolor:
-                              internal == 1 ? Colors.black : Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              internal = 1;
-                            });
-                          },
-                        ),
-                        AppBarText(
-                          text: 'JioTunes',
-                          fontcolor:
-                              internal == 2 ? Colors.black : Colors.black54,
-                          dividercolor:
-                              internal == 2 ? Colors.black : Colors.transparent,
-                          onTap: () {
-                            setState(() {
-                              internal = 2;
-                            });
-                          },
-                        ),
-                      ],
+                      children: index == 3
+                          ? [
+                              const Text(
+                                'JioSaavn Pro',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ]
+                          : [
+                              AppBarText(
+                                text: 'Music',
+                                fontcolor: internal == 0
+                                    ? Colors.black
+                                    : Colors.black54,
+                                dividercolor: internal == 0
+                                    ? Colors.black
+                                    : Colors.transparent,
+                                onTap: () {
+                                  setState(() {
+                                    internal = 0;
+                                  });
+                                },
+                              ),
+                              AppBarText(
+                                text: 'Podcasts',
+                                fontcolor: internal == 1
+                                    ? Colors.black
+                                    : Colors.black54,
+                                dividercolor: internal == 1
+                                    ? Colors.black
+                                    : Colors.transparent,
+                                onTap: () {
+                                  setState(() {
+                                    internal = 1;
+                                  });
+                                },
+                              ),
+                              AppBarText(
+                                text: 'JioTunes',
+                                fontcolor: internal == 2
+                                    ? Colors.black
+                                    : Colors.black54,
+                                dividercolor: internal == 2
+                                    ? Colors.black
+                                    : Colors.transparent,
+                                onTap: () {
+                                  setState(() {
+                                    internal = 2;
+                                  });
+                                },
+                              ),
+                            ],
                     ),
               actions: [
                 Visibility(
-                  visible: index != 1,
+                  visible: index != 1 && index != 3,
                   child: IconButton(
                     onPressed: () {},
                     icon: const Icon(
@@ -816,8 +876,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                         //     .getDownloadURL();
                                         // audioPlayer.play(UrlSource(url));
                                         setState(() async {
-                                          con.categories[0] = true;
-                                          con.categories[1] = false;
+                                          final sf = await SharedPreferences
+                                              .getInstance();
+                                          await sf.setString(
+                                              'song', hindiSongs[index]);
+                                          await sf.setString(
+                                              'img', hindiSongs[index]);
+                                          await sf.setInt('category', 0);
+                                          await sf.setInt('index', index);
+                                          c.changePathAndTitleAndCategory(
+                                            sIP: hindiSongsImgUrls[index],
+                                            sT: hindiSongs[index],
+                                            category: 0,
+                                          );
+                                          // con.categories[0] = true;
+                                          // con.categories[1] = false;
                                           if (isPaused) {
                                             setPlayer(index, 0);
                                             return;
@@ -952,10 +1025,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                   widgett: GetBuilder<CurrentSongController>(
                                     builder: (con) => IconButton(
                                       padding: EdgeInsets.zero,
-                                      onPressed: () {
+                                      onPressed: () async {
                                         setState(() async {
-                                          con.categories[0] = false;
-                                          con.categories[1] = true;
+                                          final sf = await SharedPreferences
+                                              .getInstance();
+                                          await sf.setString(
+                                              'song', englishSongs[index]);
+                                          await sf.setString('img',
+                                              englishSongsImgUrls[index]);
+                                          await sf.setInt('category', 1);
+                                          await sf.setInt('index', index);
+                                          c.changePathAndTitleAndCategory(
+                                            sIP: englishSongsImgUrls[index],
+                                            sT: englishSongs[index],
+                                            category: 1,
+                                          );
+                                          // con.categories[0] = false;
+                                          // con.categories[1] = true;
                                           if (isPaused) {
                                             setPlayer(index, 1);
                                             return;
@@ -1905,9 +1991,138 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.red,
                 ),
               if (internal == 2)
-                Container(
+                SizedBox(
                   height: size.height,
-                  color: Colors.blue,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12)
+                            .copyWith(top: 16),
+                        child: SizedBox(
+                          height: 210,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              JioTunesWidget(
+                                title: 'Top JioTunes',
+                                imgUrl: hindiSongsImgUrls[0],
+                                gradient: c0,
+                              ),
+                              JioTunesWidget(
+                                title: 'Top JioTunes',
+                                imgUrl: hindiSongsImgUrls[1],
+                                gradient: c1,
+                              ),
+                              JioTunesWidget(
+                                title: 'Top JioTunes',
+                                imgUrl: hindiSongsImgUrls[2],
+                                gradient: c2,
+                              ),
+                              JioTunesWidget(
+                                title: 'Top JioTunes',
+                                imgUrl: hindiSongsImgUrls[3],
+                                gradient: c3,
+                              ),
+                              JioTunesWidget(
+                                title: 'Top JioTunes',
+                                imgUrl: hindiSongsImgUrls[4],
+                                gradient: c4,
+                              ),
+                              JioTunesWidget(
+                                title: 'Top JioTunes',
+                                imgUrl: hindiSongsImgUrls[5],
+                                gradient: c5,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12)
+                            .copyWith(top: 16),
+                        child: const Text(
+                          'Recommended JioTunes',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: blackColor,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12)
+                            .copyWith(top: 16),
+                        child: SizedBox(
+                          height: 195,
+                          child: ListView.builder(
+                            itemCount: englishSongsImgUrls.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) => Padding(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              child: SizedBox(
+                                width: 100,
+                                child: Column(
+                                  children: [
+                                    Image.network(
+                                      englishSongsImgUrls[index],
+                                      width: 100,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Text(
+                                      englishSongs[index],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        color: blackColor,
+                                      ),
+                                    ),
+                                    Text(
+                                      englishSongs[index],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12)
+                            .copyWith(top: 16),
+                        child: const Text(
+                          'Trending JioTunes',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: blackColor,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12)
+                            .copyWith(top: 16),
+                        child: SizedBox(
+                          height: 200,
+                          child: ListView.builder(
+                            itemCount: englishSongsImgUrls.length,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (context, index) =>
+                                TrendingJioTunesWidget(
+                              imgUrl: englishSongsImgUrls[index],
+                              title: englishSongs[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
             ],
           ),
@@ -2098,40 +2313,83 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
           const MyLibraryScreen(),
           //
-          const SizedBox(),
+          const JioSaavnProScreen(),
           // const MyLibraryScreen(),
         ],
       ),
       //
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: whiteColor,
-        currentIndex: index,
-        elevation: 0,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: blackColor,
-        onTap: (value) {
-          setState(() {
-            index = value;
-            isSearch = false;
-            isClose = false;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            label: 'Home',
-            icon: Icon(Icons.home),
+      bottomNavigationBar: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BottomNavigationBar(
+            backgroundColor: whiteColor,
+            currentIndex: index,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: blackColor,
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 12,
+            ),
+            selectedLabelStyle: const TextStyle(
+              fontSize: 13,
+            ),
+            onTap: (value) {
+              setState(() {
+                index = value;
+                isSearch = false;
+                isClose = false;
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                label: 'Home',
+                icon: Icon(Icons.home),
+              ),
+              BottomNavigationBarItem(
+                label: 'Search',
+                icon: Icon(Icons.search),
+              ),
+              BottomNavigationBarItem(
+                label: 'My library',
+                icon: Icon(Icons.person),
+              ),
+              BottomNavigationBarItem(
+                label: 'Pro',
+                icon: Icon(Icons.music_note),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            label: 'Search',
-            icon: Icon(Icons.search),
+          Row(
+            children: [
+              Container(
+                height: 3,
+                margin: EdgeInsets.symmetric(horizontal: size.width * 0.077),
+                width: MediaQuery.of(context).size.width * 0.1,
+                color: index == 0 ? blackColor : whiteColor,
+              ),
+              Container(
+                height: 3,
+                margin: EdgeInsets.symmetric(horizontal: size.width * 0.077),
+                width: MediaQuery.of(context).size.width * 0.1,
+                color: index == 1 ? blackColor : whiteColor,
+              ),
+              Container(
+                height: 3,
+                margin: EdgeInsets.symmetric(horizontal: size.width * 0.077),
+                width: MediaQuery.of(context).size.width * 0.1,
+                color: index == 2 ? blackColor : whiteColor,
+              ),
+              Container(
+                height: 3,
+                margin: EdgeInsets.symmetric(horizontal: size.width * 0.068),
+                width: MediaQuery.of(context).size.width * 0.1,
+                color: index == 3 ? blackColor : whiteColor,
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            label: 'My library',
-            icon: Icon(Icons.person),
-          ),
-          BottomNavigationBarItem(
-            label: 'Pro',
-            icon: Icon(Icons.music_note),
+          const SizedBox(
+            height: 2,
           ),
         ],
       ),
