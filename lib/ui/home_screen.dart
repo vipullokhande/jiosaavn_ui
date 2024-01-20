@@ -321,7 +321,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  int cindex = 0;
   setPlayer(int currIndex, int idx) async {
+    cindex = index;
     final sf = await SharedPreferences.getInstance();
     String song = sf.getString('song') ?? '';
     // String img = sf.getString('img') ?? '';
@@ -1393,7 +1395,68 @@ class _HomeScreenState extends State<HomeScreen> {
                                             children: [
                                               IconButton(
                                                 padding: EdgeInsets.zero,
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  setState(() async {
+                                                    if (c.categoryy == 0) {
+                                                      if (c.index >= 0) {
+                                                        c.index = c.index - 1;
+                                                        final sf =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        await sf.setString(
+                                                            'song',
+                                                            hindiSongs[
+                                                                c.index]);
+                                                        await sf.setString(
+                                                            'img',
+                                                            hindiSongs[
+                                                                c.index]);
+                                                        await sf.setInt(
+                                                            'category', 0);
+                                                        await sf.setInt(
+                                                            'index', c.index);
+                                                        c.changePathAndTitleAndCategory(
+                                                            sIP:
+                                                                hindiSongsImgUrls[
+                                                                    c.index],
+                                                            sT: hindiSongs[
+                                                                c.index],
+                                                            category: 0);
+                                                        setPlayer(
+                                                            c.index, cindex);
+                                                      }
+                                                    } else if (c.categoryy ==
+                                                        1) {
+                                                      if (c.index >= 0) {
+                                                        c.index = c.index - 1;
+                                                        final sf =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        await sf.setString(
+                                                            'song',
+                                                            englishSongs[
+                                                                c.index]);
+                                                        await sf.setString(
+                                                            'img',
+                                                            englishSongsImgUrls[
+                                                                c.index]);
+                                                        await sf.setInt(
+                                                            'category', 1);
+                                                        await sf.setInt(
+                                                            'index', c.index);
+                                                        c.changePathAndTitleAndCategory(
+                                                            sIP:
+                                                                englishSongsImgUrls[
+                                                                    c.index],
+                                                            sT: englishSongs[
+                                                                c.index],
+                                                            category: 1);
+                                                        setPlayer(
+                                                            c.index, cindex);
+                                                      }
+                                                    }
+                                                  });
+                                                },
                                                 icon: const Icon(
                                                   Icons.arrow_back_ios,
                                                 ),
@@ -1429,7 +1492,70 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               IconButton(
                                                 padding: EdgeInsets.zero,
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  setState(() async {
+                                                    if (c.categoryy == 0) {
+                                                      if (c.index <
+                                                          hindiSongs.length) {
+                                                        c.index = c.index + 1;
+                                                        final sf =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        await sf.setString(
+                                                            'song',
+                                                            hindiSongs[
+                                                                c.index]);
+                                                        await sf.setString(
+                                                            'img',
+                                                            hindiSongsImgUrls[
+                                                                c.index]);
+                                                        await sf.setInt(
+                                                            'category', 0);
+                                                        await sf.setInt(
+                                                            'index', c.index);
+                                                        c.changePathAndTitleAndCategory(
+                                                            sIP:
+                                                                hindiSongsImgUrls[
+                                                                    c.index],
+                                                            sT: hindiSongs[
+                                                                c.index],
+                                                            category: 0);
+                                                        setPlayer(
+                                                            c.index, cindex);
+                                                      }
+                                                    } else if (c.categoryy ==
+                                                        1) {
+                                                      if (c.index <
+                                                          englishSongs.length) {
+                                                        c.index = c.index + 1;
+                                                        final sf =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        await sf.setString(
+                                                            'song',
+                                                            englishSongs[
+                                                                c.index]);
+                                                        await sf.setString(
+                                                            'img',
+                                                            englishSongsImgUrls[
+                                                                c.index]);
+                                                        await sf.setInt(
+                                                            'category', 1);
+                                                        await sf.setInt(
+                                                            'index', c.index);
+                                                        c.changePathAndTitleAndCategory(
+                                                            sIP:
+                                                                englishSongsImgUrls[
+                                                                    c.index],
+                                                            sT: englishSongs[
+                                                                c.index],
+                                                            category: 1);
+                                                        setPlayer(
+                                                            c.index, cindex);
+                                                      }
+                                                    }
+                                                  });
+                                                },
                                                 icon: const Icon(
                                                   Icons.arrow_forward_ios,
                                                 ),
