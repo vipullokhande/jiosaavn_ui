@@ -92,17 +92,17 @@ class CurrentSongController extends GetxController {
 
   getCategory() async {
     final sf = await SharedPreferences.getInstance();
-    return sf.getInt('category');
+    return sf.getInt('category')??categoryy;
   }
 
   getSong() async {
     final sf = await SharedPreferences.getInstance();
-    return sf.getString('song');
+    return sf.getString('song') ?? songTitle;
   }
 
   getImg() async {
     final sf = await SharedPreferences.getInstance();
-    return sf.getString('img');
+    return sf.getString('img')??songImgPath;
   }
 
   String songTitle = 'Apna-Bana-Le(PagalWorld).mp3';

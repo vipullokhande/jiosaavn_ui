@@ -2458,7 +2458,7 @@ class _HomeScreenState extends State<HomeScreen> {
               fontSize: 12,
             ),
             selectedLabelStyle: const TextStyle(
-              fontSize: 13,
+              fontSize: 12,
             ),
             onTap: (value) {
               setState(() {
@@ -2487,30 +2487,47 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                height: 3,
-                margin: EdgeInsets.symmetric(horizontal: size.width * 0.077),
-                width: MediaQuery.of(context).size.width * 0.1,
-                color: index == 0 ? blackColor : whiteColor,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.25,
+                child: Center(
+                  child: Container(
+                    height: 3,
+                    width: MediaQuery.of(context).size.width * 0.1,
+                    color: index == 0 ? blackColor : whiteColor,
+                  ),
+                ),
               ),
-              Container(
-                height: 3,
-                margin: EdgeInsets.symmetric(horizontal: size.width * 0.077),
-                width: MediaQuery.of(context).size.width * 0.1,
-                color: index == 1 ? blackColor : whiteColor,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.25,
+                child: Center(
+                  child: Container(
+                    height: 3,
+                    width: MediaQuery.of(context).size.width * 0.1,
+                    color: index == 1 ? blackColor : whiteColor,
+                  ),
+                ),
               ),
-              Container(
-                height: 3,
-                margin: EdgeInsets.symmetric(horizontal: size.width * 0.077),
-                width: MediaQuery.of(context).size.width * 0.1,
-                color: index == 2 ? blackColor : whiteColor,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.25,
+                child: Center(
+                  child: Container(
+                    height: 3,
+                    width: MediaQuery.of(context).size.width * 0.1,
+                    color: index == 2 ? blackColor : whiteColor,
+                  ),
+                ),
               ),
-              Container(
-                height: 3,
-                margin: EdgeInsets.symmetric(horizontal: size.width * 0.068),
-                width: MediaQuery.of(context).size.width * 0.1,
-                color: index == 3 ? blackColor : whiteColor,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.25,
+                child: Center(
+                  child: Container(
+                    height: 3,
+                    width: MediaQuery.of(context).size.width * 0.1,
+                    color: index == 3 ? blackColor : whiteColor,
+                  ),
+                ),
               ),
             ],
           ),
