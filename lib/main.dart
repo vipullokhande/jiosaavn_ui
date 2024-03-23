@@ -1,14 +1,18 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:jiosaavn_vip/authenticatiion/screens/splash_screen.dart';
+import 'package:jiosaavn_vip/bloc/bloc/music_bloc.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/firebase_options.dart';
 import 'package:jiosaavn_vip/ui/home_screen.dart';
+import 'bloc_player_screen.dart';
 import 'controllers/current_song_controller.dart';
 import 'notification_controller.dart';
+
+//Use SnackBAr for bottom Music
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
@@ -50,6 +54,10 @@ void main() async {
         channelName: 'mr_vipul_21',
         channelDescription: 'mr',
         channelGroupKey: 'basic_channel_group',
+        groupKey: 'vip',
+        groupSort: GroupSort.Asc,
+        importance: NotificationImportance.Max,
+        channelShowBadge: true,
       ),
     ],
     channelGroups: [
@@ -62,7 +70,7 @@ void main() async {
   bool isAllowedSendNotication =
       await AwesomeNotifications().isNotificationAllowed();
   if (!isAllowedSendNotication) {
-    AwesomeNotifications().requestPermissionToSendNotifications();
+    await AwesomeNotifications().requestPermissionToSendNotifications();
   }
   runApp(const MyApp());
 }
@@ -92,7 +100,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
     return GetMaterialApp(
       title: 'JioSaavn UI',
       // navigatorKey: navKey,
@@ -118,7 +125,11 @@ class _MyAppState extends State<MyApp> {
           bottomSheetTheme: const BottomSheetThemeData(
             backgroundColor: whiteColor,
           )),
-      home: const SplashScreen(),
+      // home: const SplashScreen(),
+      home: BlocProvider(
+        create: (_) => MusicBloc(),
+        child: const BlocPlayerScreen(),
+      ),
     );
   }
 }

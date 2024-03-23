@@ -122,6 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
     'Labon Ko Bhool Bhulaiyaa 128 Kbps.mp3',
     'Maan Meri Jaan_64(PagalWorld.com.pe).mp3',
   ];
+  // List<String> hindiSongs = [
+  //   'assets/01  Zara Sa - www.downloadming.com.mp3',
+  //   'assets/Apna-Bana-Le(PagalWorld).mp3',
+  //   'assets/Deva Shree Ganesha_64(PagalWorld.com.pe).mp3',
+  //   'assets/Kiya Kiya - Welcome 128 Kbps.mp3',
+  //   'assets/Labon Ko Bhool Bhulaiyaa 128 Kbps.mp3',
+  //   'assets/Maan Meri Jaan_64(PagalWorld.com.pe).mp3',
+  // ];
   List<String> englishSongs = [
     'Baby-Calm-Down(PaglaSongs).mp3',
     'Ignite---Alan-Walker(PagalWorlld.Com).mp3',
