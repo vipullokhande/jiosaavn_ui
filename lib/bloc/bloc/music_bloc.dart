@@ -27,6 +27,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
       await ControlMusicService.instance.setPlayer(
         event.currIndex!,
         event.index!,
+        false,
       );
     } on Exception catch (e) {
       // ignore: avoid_print

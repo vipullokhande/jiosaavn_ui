@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:jiosaavn_vip/data/song_data.dart';
 
@@ -11,7 +12,17 @@ class ControlMusicService {
   //
   static AudioPlayer audioPlayer = AudioPlayer();
   //
-  Future setPlayer(int currIndex, int idx) async {
+  Future setPlayer(int currIndex, int idx, bool isUrl) async {
+    String url = '';
+    if (isUrl == true) {
+      if (idx == 0) {
+        url = await FirebaseStorage.instance
+            .ref()
+            .child('hindi_songs')
+            .child(hindiSongs[currIndex])
+            .getDownloadURL();
+      }
+    }
     //
     await audioPlayer.stop();
     //
@@ -27,10 +38,10 @@ class ControlMusicService {
       // audioPlayer.seek(Duration.zero);
     });
     //
-    AssetSource? main;
+    dynamic main;
     //
     if (idx == 0) {
-      main = AssetSource(hindiSongs[currIndex]);
+      main = isUrl ? UrlSource(url) : AssetSource(hindiSongs[currIndex]);
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: currIndex,
@@ -48,7 +59,7 @@ class ControlMusicService {
         ),
       );
     } else if (idx == 1) {
-      main = AssetSource(englishSongs[currIndex]);
+      main = isUrl ? UrlSource(url) : AssetSource(englishSongs[currIndex]);
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: currIndex,

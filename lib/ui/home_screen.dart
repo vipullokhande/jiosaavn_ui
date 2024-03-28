@@ -541,19 +541,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // bool isPlayed = c.isPlay;
 
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     await AwesomeNotifications().createNotification(
-      //       content: NotificationContent(
-      //         id: 1,
-      //         channelKey: 'vip',
-      //         title: 'First Title',
-      //         body: 'First Notification',
-      //       ),
-      //     );
-      //   },
-      // ),
-
       //
       appBar: index != 1
           ? AppBar(

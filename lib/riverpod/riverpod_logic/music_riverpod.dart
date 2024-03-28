@@ -32,6 +32,7 @@ class MusicNotifier extends StateNotifier<Map<String, dynamic>> {
       await ControlMusicService.instance.setPlayer(
         currentIndex,
         categoryIndex,
+        false,
       );
       isPlay = true;
     } else if (categoryIndex == 1) {
@@ -44,6 +45,7 @@ class MusicNotifier extends StateNotifier<Map<String, dynamic>> {
       await ControlMusicService.instance.setPlayer(
         currentIndex,
         categoryIndex,
+        false,
       );
       isPlay = true;
     }
