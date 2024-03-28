@@ -49,7 +49,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
     MusicResumeButtonClickedEvent event,
     Emitter<MusicState> state,
   ) async {
-    await ControlMusicService.instance.resume();
+    await ControlMusicService.instance.pause();
     emit(MusicPlayerLoaded(
       event.currIndex,
       event.index,

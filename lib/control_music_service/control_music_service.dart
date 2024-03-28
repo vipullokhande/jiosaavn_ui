@@ -35,7 +35,7 @@ class ControlMusicService {
         content: NotificationContent(
           id: currIndex,
           channelKey: 'vip',
-          groupKey: 'vip',
+          groupKey: 'vip1',
           title: hindiSongs[currIndex],
           body: hindiSongs[currIndex],
           fullScreenIntent: true,
@@ -53,7 +53,7 @@ class ControlMusicService {
         content: NotificationContent(
           id: currIndex,
           channelKey: 'vip',
-          groupKey: 'vip',
+          groupKey: 'vip2',
           title: englishSongs[currIndex],
           body: englishSongs[currIndex],
           fullScreenIntent: true,
@@ -77,11 +77,15 @@ class ControlMusicService {
 
   //
   Future pause() async {
-    await audioPlayer.pause();
+    if (audioPlayer.state == PlayerState.paused) {
+      await audioPlayer.resume();
+    } else {
+      await audioPlayer.pause();
+    }
   }
 
   //
-  Future resume() async {
-    await audioPlayer.resume();
+  Future stop() async {
+    await audioPlayer.stop();
   }
 }

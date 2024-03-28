@@ -1,14 +1,13 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:jiosaavn_vip/bloc/bloc/music_bloc.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/firebase_options.dart';
+import 'package:jiosaavn_vip/riverpod_player_screen.dart';
 import 'package:jiosaavn_vip/ui/home_screen.dart';
-import 'bloc_player_screen.dart';
 import 'controllers/current_song_controller.dart';
 import 'notification_controller.dart';
 
@@ -104,6 +103,7 @@ class _MyAppState extends State<MyApp> {
       title: 'JioSaavn UI',
       // navigatorKey: navKey,
       debugShowCheckedModeBanner: false,
+      scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
       // routes: {
       //   '/notification_screen': (p0) {
       //     return NotificationScreen();
@@ -116,19 +116,23 @@ class _MyAppState extends State<MyApp> {
       //   },
       // },
       theme: ThemeData.light(useMaterial3: true).copyWith(
-          scaffoldBackgroundColor: const Color.fromARGB(255, 241, 238, 238),
-          appBarTheme: const AppBarTheme(
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            backgroundColor: Color.fromARGB(255, 241, 238, 238),
-          ),
-          bottomSheetTheme: const BottomSheetThemeData(
-            backgroundColor: whiteColor,
-          )),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 241, 238, 238),
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          backgroundColor: Color.fromARGB(255, 241, 238, 238),
+        ),
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: whiteColor,
+        ),
+      ),
       // home: const SplashScreen(),
-      home: BlocProvider(
-        create: (_) => MusicBloc(),
-        child: const BlocPlayerScreen(),
+      // home: BlocProvider(
+      //   create: (_) => MusicBloc(),
+      //   child: const BlocPlayerScreen(),
+      // ),
+      home: const ProviderScope(
+        child: RiverPodPlayerScreen(),
       ),
     );
   }
