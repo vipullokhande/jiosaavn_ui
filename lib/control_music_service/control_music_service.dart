@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -44,7 +45,7 @@ class ControlMusicService {
       main = isUrl ? UrlSource(url) : AssetSource(hindiSongs[currIndex]);
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
-          id: currIndex,
+          id: Random().nextInt(10000),
           channelKey: 'vip',
           groupKey: 'vip1',
           title: hindiSongs[currIndex],
@@ -62,7 +63,7 @@ class ControlMusicService {
       main = isUrl ? UrlSource(url) : AssetSource(englishSongs[currIndex]);
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
-          id: currIndex,
+          id: Random().nextInt(10000),
           channelKey: 'vip',
           groupKey: 'vip2',
           title: englishSongs[currIndex],
@@ -93,6 +94,16 @@ class ControlMusicService {
     } else {
       await audioPlayer.pause();
     }
+  }
+
+  //
+  Future pauseR() async {
+    await audioPlayer.pause();
+  }
+
+  //
+  Future resume() async {
+    await audioPlayer.resume();
   }
 
   //

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jiosaavn_vip/data/song_data.dart';
+import 'package:jiosaavn_vip/ui/riverpod_open_song_screen.dart';
+
 import 'colors.dart';
 import 'riverpod/riverpod_logic/music_riverpod.dart';
 import 'widgets/recently_played_widget.dart';
@@ -135,7 +137,29 @@ class _RiverPodPlayerScreenState extends ConsumerState<RiverPodPlayerScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const RiverPodOpenSongScreen(
+                        // imgUrl: musicProviderWatch['songImg'],
+                        // count: musicProviderWatch['c'] == 0
+                        //     ? hindiSongs.length
+                        //     : englishSongs.length,
+                        // curr: musicProviderWatch['c'] == 0
+                        //     ? hindiSongsImgUrls
+                        //         .indexOf(musicProviderWatch['songImg'])
+                        //     : englishSongsImgUrls
+                        //         .indexOf(musicProviderWatch['songImg']),
+                        // songNames: musicProviderWatch['c'] == 0
+                        //     ? hindiSongs
+                        //     : englishSongs,
+                        // songsImgUrls: musicProviderWatch['c'] == 0
+                        //     ? hindiSongsImgUrls
+                        //     : englishSongsImgUrls,
+                        ),
+                  ),
+                );
+              },
               child: SizedBox(
                 height: size.height * 0.065,
                 width: size.width,
@@ -182,17 +206,20 @@ class _RiverPodPlayerScreenState extends ConsumerState<RiverPodPlayerScreen> {
                         const Spacer(),
                         IconButton(
                           onPressed: () async {
+                            // await musicRiverpodProvider.playerStop();
                             await musicRiverpodProvider.pauseSong(
                               categoryIndex: musicProviderWatch['c'] as int,
                               currentIndex: musicProviderWatch['c'] as int == 0
-                                  ? hindiSongs
-                                      .indexOf(musicProviderWatch['songName'])
-                                  : englishSongs
-                                      .indexOf(musicProviderWatch['songName']),
+                                  ? hindiSongs.indexOf(
+                                      musicProviderWatch['songName'],
+                                    )
+                                  : englishSongs.indexOf(
+                                      musicProviderWatch['songName'],
+                                    ),
                             );
                           },
                           icon: Icon(
-                            musicProviderWatch['state'] == 'play'
+                            musicProviderWatch['state'] == 'resume'
                                 ? Icons.pause_circle_filled_rounded
                                 : Icons.play_circle_fill,
                             size: 40,

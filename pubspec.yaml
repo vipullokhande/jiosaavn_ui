@@ -45,6 +45,7 @@ dependencies:
   get: ^4.6.6
   just_audio: ^0.9.36
   shared_preferences: ^2.2.2
+  uuid: ^4.3.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

@@ -83,9 +83,7 @@ class _SongPlayerState extends State<SongPlayer> {
           actions: [
             IconButton(
               onPressed: () {
-                Get.to(FavouriteScreen(
-                  audioPlayer: widget.audioPlayer,
-                ));
+                Get.to(const FavouriteScreen());
               },
               icon: const Icon(
                 Icons.favorite_border,

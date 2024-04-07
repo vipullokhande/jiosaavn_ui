@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jiosaavn_vip/bloc/bloc/music_bloc.dart';
-import 'package:jiosaavn_vip/bloc/bloc/music_event.dart';
 import 'package:just_audio/just_audio.dart';
+import 'bloc/music_bloc/music_bloc.dart';
+import 'bloc/music_bloc/music_event.dart';
 import 'colors.dart';
 import 'data/song_data.dart';
 import 'widgets/recently_played_widget.dart';

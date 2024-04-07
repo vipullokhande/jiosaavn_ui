@@ -1,13 +1,10 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiosaavn_vip/controllers/current_song_controller.dart';
 
 class FavouriteScreen extends StatefulWidget {
-  final AudioPlayer audioPlayer;
   const FavouriteScreen({
     super.key,
-    required this.audioPlayer,
   });
 
   @override

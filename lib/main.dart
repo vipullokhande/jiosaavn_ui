@@ -71,7 +71,7 @@ void main() async {
   if (!isAllowedSendNotication) {
     await AwesomeNotifications().requestPermissionToSendNotifications();
   }
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -131,9 +131,7 @@ class _MyAppState extends State<MyApp> {
       //   create: (_) => MusicBloc(),
       //   child: const BlocPlayerScreen(),
       // ),
-      home: const ProviderScope(
-        child: RiverPodPlayerScreen(),
-      ),
+      home: const RiverPodPlayerScreen(),
     );
   }
 }
