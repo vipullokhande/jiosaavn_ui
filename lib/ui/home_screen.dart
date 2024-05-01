@@ -330,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   int cindex = 0;
-  setPlayer(int currIndex, int idx) async {
+  Future setPlayer(int currIndex, int idx) async {
     cindex = index;
     final sf = await SharedPreferences.getInstance();
     String song = sf.getString('song') ?? '';
@@ -799,149 +799,163 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemCount: hindiSongs.length,
                                 shrinkWrap: true,
                                 physics: const ClampingScrollPhysics(),
-                                itemBuilder: (context, index) =>
-                                    RecentlyPlayedWidget(
-                                  recentAlbumText: hindiSongs[index],
-                                  onPressed: () {
-                                    // setState(() {
-                                    //   if (con.isPlay) {
-                                    //     audioPlayer.pause();
-                                    //     con.isPlay = false;
-                                    //   } else {
-                                    //     audioPlayer.play(
-                                    //       AssetSource(
-                                    //         hindiSongs[index],
-                                    //       ),
-                                    //     );
-                                    //     con.isPlay = true;
-                                    //   }
-                                    // });
-                                  },
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => SongSliverScreen(
-                                          audioPlayer: audioPlayer,
-                                          songTitles: hindiSongs + hindiSongs,
-                                          songImg: hindiSongsImgUrls +
-                                              hindiSongsImgUrls,
-                                          sTitle: hindiSongs[index],
-                                          sName: hindiSongs[index],
-                                          sImg: hindiSongsImgUrls[index],
-                                        ),
-                                      ),
-                                    );
-                                    // if (!isPlayed) {
-                                    //   c.isPlay = true;
-                                    // }
-                                    // con.index = index;
-                                    // con.categories[0] = true;
-                                    // con.categories[1] = false;
-                                    // Navigator.of(context).push(
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => SongScreen(
-                                    //       audioPlayer: audioPlayer,
-                                    //       path: hindiSongs[index],
-                                    //       index: index,
-                                    //       img: hindiSongsImgUrls[index],
-                                    //     ),
-                                    //   ),
-                                    // );
-                                  },
-                                  onLongPressed: () {
-                                    showBS(
-                                      category: 0,
-                                      idx: index,
-                                      img: hindiSongsImgUrls[index],
-                                      text: hindiSongs[index],
-                                    );
-                                  },
-                                  recentSongImg: hindiSongsImgUrls[index],
-                                  recHeadColor: blackColor,
-                                  recDescColor: recdescColor,
-                                  recentAlbumDescText: hindiSongs[index],
-                                  widgett: GetBuilder<CurrentSongController>(
-                                    builder: (con) => IconButton(
-                                      padding: EdgeInsets.zero,
-                                      onPressed: () async {
-                                        // String url = await FirebaseStorage
-                                        //     .instance
-                                        //     .ref()
-                                        //     .child('hindi_songs')
-                                        //     .child(
-                                        //         hindiSongs[index])
-                                        //     .getDownloadURL();
-                                        // audioPlayer.play(UrlSource(url));
-                                        setState(() async {
-                                          final sf = await SharedPreferences
-                                              .getInstance();
-                                          await sf.setString(
-                                              'song', hindiSongs[index]);
-                                          await sf.setString(
-                                              'img', hindiSongs[index]);
-                                          await sf.setInt('category', 0);
-                                          await sf.setInt('index', index);
-                                          c.changePathAndTitleAndCategory(
-                                            sIP: hindiSongsImgUrls[index],
-                                            sT: hindiSongs[index],
-                                            category: 0,
-                                          );
-                                          // con.categories[0] = true;
-                                          // con.categories[1] = false;
-                                          if (isPaused) {
-                                            setPlayer(index, 0);
-                                            return;
-                                          } else {
-                                            isPlaying = true;
-                                            setPlayer(index, 0);
-                                          }
-                                          // globalIndex = index;
-                                          // audioPlayer.play(
-                                          //     AssetSource(hindiSongs[index]));
-                                        });
-                                        //
-                                        // if (con.categories[0]) {
-                                        //   setState(() {
-
-                                        //     // setPlayer(index);
-                                        //     // con.changePathAndTitle(
-                                        //     //   pa: hindiSongs[index],
-                                        //     //   tit: hindiSongs[index],
-                                        //     // );
-                                        //     if (con.isPlay) {
-                                        //       if (con.index != index) {
-                                        //         con.index = index;
-                                        //         audioPlayer.play(AssetSource(
-                                        //             hindiSongs[index]));
-                                        //         return;
-                                        //       }
-                                        //       con.index = index;
-                                        //       audioPlayer.pause();
-                                        //       con.isPlay = false;
-                                        //     } else {
-                                        //       con.isPlay = true;
-                                        //       con.index = index;
-                                        //       audioPlayer.play(
-                                        //         AssetSource(
-                                        //           hindiSongs[index],
-                                        //         ),
-                                        //       );
-                                        //     }
-                                        //   });
-                                        // }
+                                itemBuilder: (context, index) {
+                                  return GetBuilder<CurrentSongController>(
+                                    builder: (controller) =>
+                                        RecentlyPlayedWidget(
+                                      isBorder:
+                                          Get.find<CurrentSongController>()
+                                                      .categoryy ==
+                                                  0 &&
+                                              Get.find<CurrentSongController>()
+                                                      .index ==
+                                                  index,
+                                      recentAlbumText: hindiSongs[index],
+                                      onPressed: () {
                                         // setState(() {
-                                        //   con.index = index;
-                                        //   con.categories[0] = true;
-                                        //   con.categories[1] = false;
+                                        //   if (con.isPlay) {
+                                        //     audioPlayer.pause();
+                                        //     con.isPlay = false;
+                                        //   } else {
+                                        //     audioPlayer.play(
+                                        //       AssetSource(
+                                        //         hindiSongs[index],
+                                        //       ),
+                                        //     );
+                                        //     con.isPlay = true;
+                                        //   }
                                         // });
                                       },
-                                      icon: const Icon(
-                                        Icons.play_circle_fill,
-                                        color: whiteColor,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SongSliverScreen(
+                                              audioPlayer: audioPlayer,
+                                              songTitles:
+                                                  hindiSongs + hindiSongs,
+                                              songImg: hindiSongsImgUrls +
+                                                  hindiSongsImgUrls,
+                                              sTitle: hindiSongs[index],
+                                              sName: hindiSongs[index],
+                                              sImg: hindiSongsImgUrls[index],
+                                            ),
+                                          ),
+                                        );
+                                        // if (!isPlayed) {
+                                        //   c.isPlay = true;
+                                        // }
+                                        // con.index = index;
+                                        // con.categories[0] = true;
+                                        // con.categories[1] = false;
+                                        // Navigator.of(context).push(
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => SongScreen(
+                                        //       audioPlayer: audioPlayer,
+                                        //       path: hindiSongs[index],
+                                        //       index: index,
+                                        //       img: hindiSongsImgUrls[index],
+                                        //     ),
+                                        //   ),
+                                        // );
+                                      },
+                                      onLongPressed: () {
+                                        showBS(
+                                          category: 0,
+                                          idx: index,
+                                          img: hindiSongsImgUrls[index],
+                                          text: hindiSongs[index],
+                                        );
+                                      },
+                                      recentSongImg: hindiSongsImgUrls[index],
+                                      recHeadColor: blackColor,
+                                      recDescColor: recdescColor,
+                                      recentAlbumDescText: hindiSongs[index],
+                                      widgett:
+                                          GetBuilder<CurrentSongController>(
+                                        builder: (con) => IconButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed: () async {
+                                            // String url = await FirebaseStorage
+                                            //     .instance
+                                            //     .ref()
+                                            //     .child('hindi_songs')
+                                            //     .child(
+                                            //         hindiSongs[index])
+                                            //     .getDownloadURL();
+                                            // audioPlayer.play(UrlSource(url));
+                                            // setState(() async {
+                                            final sf = await SharedPreferences
+                                                .getInstance();
+                                            await sf.setString(
+                                                'song', hindiSongs[index]);
+                                            await sf.setString(
+                                                'img', hindiSongs[index]);
+                                            await sf.setInt('category', 0);
+                                            await sf.setInt('index', index);
+                                            c.changePathAndTitleAndCategory(
+                                              sIP: hindiSongsImgUrls[index],
+                                              sT: hindiSongs[index],
+                                              category: 0,
+                                            );
+                                            // con.categories[0] = true;
+                                            // con.categories[1] = false;
+                                            if (isPaused) {
+                                              await setPlayer(index, 0);
+                                              return;
+                                            } else {
+                                              isPlaying = true;
+                                              await setPlayer(index, 0);
+                                            }
+                                            // globalIndex = index;
+                                            // audioPlayer.play(
+                                            //     AssetSource(hindiSongs[index]));
+                                            // });
+                                            //
+                                            // if (con.categories[0]) {
+                                            //   setState(() {
+
+                                            //     // setPlayer(index);
+                                            //     // con.changePathAndTitle(
+                                            //     //   pa: hindiSongs[index],
+                                            //     //   tit: hindiSongs[index],
+                                            //     // );
+                                            //     if (con.isPlay) {
+                                            //       if (con.index != index) {
+                                            //         con.index = index;
+                                            //         audioPlayer.play(AssetSource(
+                                            //             hindiSongs[index]));
+                                            //         return;
+                                            //       }
+                                            //       con.index = index;
+                                            //       audioPlayer.pause();
+                                            //       con.isPlay = false;
+                                            //     } else {
+                                            //       con.isPlay = true;
+                                            //       con.index = index;
+                                            //       audioPlayer.play(
+                                            //         AssetSource(
+                                            //           hindiSongs[index],
+                                            //         ),
+                                            //       );
+                                            //     }
+                                            //   });
+                                            // }
+                                            // setState(() {
+                                            //   con.index = index;
+                                            //   con.categories[0] = true;
+                                            //   con.categories[1] = false;
+                                            // });
+                                          },
+                                          icon: const Icon(
+                                            Icons.play_circle_fill,
+                                            color: whiteColor,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -973,6 +987,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 physics: const ClampingScrollPhysics(),
                                 itemBuilder: (context, index) =>
                                     RecentlyPlayedWidget(
+                                  isBorder: Get.find<CurrentSongController>()
+                                              .categoryy ==
+                                          1 &&
+                                      Get.find<CurrentSongController>().index ==
+                                          index,
                                   recentAlbumText: englishSongs[index],
                                   onPressed: () {
                                     // setState(() {
@@ -1023,30 +1042,30 @@ class _HomeScreenState extends State<HomeScreen> {
                                     builder: (con) => IconButton(
                                       padding: EdgeInsets.zero,
                                       onPressed: () async {
-                                        setState(() async {
-                                          final sf = await SharedPreferences
-                                              .getInstance();
-                                          await sf.setString(
-                                              'song', englishSongs[index]);
-                                          await sf.setString('img',
-                                              englishSongsImgUrls[index]);
-                                          await sf.setInt('category', 1);
-                                          await sf.setInt('index', index);
-                                          c.changePathAndTitleAndCategory(
-                                            sIP: englishSongsImgUrls[index],
-                                            sT: englishSongs[index],
-                                            category: 1,
-                                          );
-                                          // con.categories[0] = false;
-                                          // con.categories[1] = true;
-                                          if (isPaused) {
-                                            setPlayer(index, 1);
-                                            return;
-                                          } else {
-                                            isPlaying = true;
-                                            setPlayer(index, 1);
-                                          }
-                                        });
+                                        // setState(() async {
+                                        final sf = await SharedPreferences
+                                            .getInstance();
+                                        await sf.setString(
+                                            'song', englishSongs[index]);
+                                        await sf.setString(
+                                            'img', englishSongsImgUrls[index]);
+                                        await sf.setInt('category', 1);
+                                        await sf.setInt('index', index);
+                                        c.changePathAndTitleAndCategory(
+                                          sIP: englishSongsImgUrls[index],
+                                          sT: englishSongs[index],
+                                          category: 1,
+                                        );
+                                        // con.categories[0] = false;
+                                        // con.categories[1] = true;
+                                        if (isPaused) {
+                                          await setPlayer(index, 1);
+                                          return;
+                                        } else {
+                                          isPlaying = true;
+                                          await setPlayer(index, 1);
+                                        }
+                                        // });
                                       },
                                       // icon: Icon(
                                       //   con.index == index &&
@@ -1598,6 +1617,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   final sImg = popSongImg[idx];
                                   return RecentlyPlayedWidget(
                                     recentAlbumText: sText,
+                                    isBorder: false,
                                     recentAlbumDescText: sdText,
                                     recentSongImg: sImg,
                                     recHeadColor: blackColor,

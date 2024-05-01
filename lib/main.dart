@@ -1,13 +1,16 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:jiosaavn_vip/bloc/music_bloc/music_bloc.dart';
+import 'package:jiosaavn_vip/bloc_player_screen.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/firebase_options.dart';
-import 'package:jiosaavn_vip/riverpod_player_screen.dart';
 import 'package:jiosaavn_vip/ui/home_screen.dart';
+
 import 'controllers/current_song_controller.dart';
 import 'notification_controller.dart';
 
@@ -127,11 +130,11 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       // home: const SplashScreen(),
-      // home: BlocProvider(
-      //   create: (_) => MusicBloc(),
-      //   child: const BlocPlayerScreen(),
-      // ),
-      home: const RiverPodPlayerScreen(),
+      home: BlocProvider(
+        create: (_) => MusicBloc(),
+        child: const BlocPlayerScreen(),
+      ),
+      // home: const RiverPodPlayerScreen(),
     );
   }
 }

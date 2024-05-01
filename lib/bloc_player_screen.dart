@@ -82,6 +82,8 @@ class _BlocPlayerScreenState extends State<BlocPlayerScreen> {
                           shrinkWrap: true,
                           physics: const ClampingScrollPhysics(),
                           itemBuilder: (context, index) => RecentlyPlayedWidget(
+                            isBorder:
+                                state.index == 0 && state.currIndex == index,
                             recentAlbumText: hindiSongs[index],
                             onPressed: () {},
                             onTap: () {},
@@ -136,6 +138,8 @@ class _BlocPlayerScreenState extends State<BlocPlayerScreen> {
                           shrinkWrap: true,
                           physics: const ClampingScrollPhysics(),
                           itemBuilder: (context, index) => RecentlyPlayedWidget(
+                            isBorder:
+                                state.index == 1 && state.currIndex == index,
                             recentAlbumText: englishSongs[index],
                             onPressed: () {},
                             onTap: () {},

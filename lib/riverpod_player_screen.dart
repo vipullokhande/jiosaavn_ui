@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jiosaavn_vip/data/song_data.dart';
 import 'package:jiosaavn_vip/ui/riverpod_open_song_screen.dart';
-
 import 'colors.dart';
 import 'riverpod/riverpod_logic/music_riverpod.dart';
 import 'widgets/recently_played_widget.dart';
@@ -52,6 +51,10 @@ class _RiverPodPlayerScreenState extends ConsumerState<RiverPodPlayerScreen> {
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
                         itemBuilder: (context, index) => RecentlyPlayedWidget(
+                          isBorder: musicProviderWatch['c'] == 0 &&
+                              hindiSongs.indexOf(
+                                      musicProviderWatch['songName']) ==
+                                  index,
                           recentAlbumText: hindiSongs[index],
                           onPressed: () {},
                           onTap: () {},
@@ -105,6 +108,10 @@ class _RiverPodPlayerScreenState extends ConsumerState<RiverPodPlayerScreen> {
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
                         itemBuilder: (context, index) => RecentlyPlayedWidget(
+                          isBorder: musicProviderWatch['c'] == 1 &&
+                              englishSongs.indexOf(
+                                      musicProviderWatch['songName']) ==
+                                  index,
                           recentAlbumText: englishSongs[index],
                           onPressed: () {},
                           onTap: () {},
