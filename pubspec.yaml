@@ -44,6 +44,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   get: ^4.6.6
   just_audio: ^0.9.36
+  mysql1: ^0.20.0
   shared_preferences: ^2.2.2
   uuid: ^4.3.3
 

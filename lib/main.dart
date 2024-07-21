@@ -1,16 +1,14 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:jiosaavn_vip/bloc/music_bloc/music_bloc.dart';
-import 'package:jiosaavn_vip/bloc_player_screen.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/firebase_options.dart';
 import 'package:jiosaavn_vip/ui/home_screen.dart';
-
+import 'package:mysql1/mysql1.dart';
+import 'authenticatiion/screens/splash_screen.dart';
 import 'controllers/current_song_controller.dart';
 import 'notification_controller.dart';
 
@@ -100,6 +98,20 @@ class _MyAppState extends State<MyApp> {
     Get.put(CurrentSongController());
   }
 
+  var conn = SqlConnection();
+  getData() async {
+    await conn.connectDb().then((connection) async {
+      try {
+        String sql = 'select * from students;';
+        await connection.query(sql).then((value) {
+          print('DATA $value');
+        });
+      } on Exception catch (e) {
+        print(e.toString());
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -129,12 +141,31 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: whiteColor,
         ),
       ),
-      // home: const SplashScreen(),
-      home: BlocProvider(
-        create: (_) => MusicBloc(),
-        child: const BlocPlayerScreen(),
-      ),
+      home: const SplashScreen(),
+      // home: Scaffold(
+      //   body: Center(
+      //     child: TextButton(
+      //       onPressed: () async {
+      //         await getData();
+      //       },
+      //       child: Text('SQL'),
+      //     ),
+      //   ),
+      // ),
       // home: const RiverPodPlayerScreen(),
     );
+  }
+}
+
+class SqlConnection {
+  Future<MySqlConnection> connectDb() async {
+    var conectionSettings = ConnectionSettings(
+      host: 'localhost',
+      port: 3306,
+      db: 'myDb',
+      user: 'root',
+      password: 'root',
+    );
+    return await MySqlConnection.connect(conectionSettings);
   }
 }
