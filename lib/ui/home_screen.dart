@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:jiosaavn_vip/controllers/current_song_controller.dart';
+import 'package:jiosaavn_vip/main.dart';
 import 'package:jiosaavn_vip/ui/jiosaavn_pro_screen.dart';
 import 'package:jiosaavn_vip/ui/my_library_screen.dart';
 import 'package:jiosaavn_vip/ui/song_open_screen.dart';
@@ -18,6 +19,7 @@ import 'package:jiosaavn_vip/widgets/search_item.dart';
 import 'package:jiosaavn_vip/widgets/single_channel_item_search.dart';
 import 'package:jiosaavn_vip/widgets/song_player.dart';
 import 'package:jiosaavn_vip/widgets/trending_jiotunes_widget.dart';
+import 'package:on_audio_query/on_audio_query.dart' as audio;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
@@ -554,9 +556,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const Text(
                         'My Library',
                         style: TextStyle(
-                            color: blackColor,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600),
+                          color: blackColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     )
                   : Row(
@@ -1587,183 +1590,183 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       //
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12)
-                            .copyWith(top: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 7),
-                              child: Text(
-                                'Now playing Pop',
-                                style: TextStyle(
-                                    color: blackColor,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 180,
-                              child: ListView.builder(
-                                itemCount: recentSongText.length,
-                                scrollDirection: Axis.horizontal,
-                                shrinkWrap: true,
-                                physics: const ClampingScrollPhysics(),
-                                itemBuilder: (context, idx) {
-                                  final sText = popSongText[idx];
-                                  final sdText = popDescText[idx];
-                                  final sImg = popSongImg[idx];
-                                  return RecentlyPlayedWidget(
-                                    recentAlbumText: sText,
-                                    isBorder: false,
-                                    recentAlbumDescText: sdText,
-                                    recentSongImg: sImg,
-                                    recHeadColor: blackColor,
-                                    recDescColor: recdescColor,
-                                    widgett: const SizedBox(),
-                                    // icon: Icons.play_circle_fill_outlined,
-                                    onPressed: () {},
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => SongOpenScreen(
-                                            sTitle: sText,
-                                            sName: sdText,
-                                            sImg: sImg,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    onLongPressed: () {
-                                      showModalBottomSheet(
-                                        isScrollControlled: true,
-                                        context: context,
-                                        backgroundColor: Colors.transparent,
-                                        builder: (context) {
-                                          return Container(
-                                            margin: const EdgeInsets.only(
-                                                bottom: 10),
-                                            height: size.height * 0.65,
-                                            child: Stack(
-                                              alignment: Alignment.bottomCenter,
-                                              children: [
-                                                Container(
-                                                  width: size.width * 0.9,
-                                                  height: size.height * 0.55,
-                                                  padding: EdgeInsets.only(
-                                                    top: size.height * 0.1,
-                                                  ),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                      Radius.circular(12),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      ListTile(
-                                                        leading: const Icon(
-                                                          Icons
-                                                              .play_arrow_outlined,
-                                                        ),
-                                                        title: const Text(
-                                                            'Play now'),
-                                                        onTap: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                      ListTile(
-                                                        leading: const Icon(Icons
-                                                            .favorite_border),
-                                                        title: const Text(
-                                                            'Save to Library'),
-                                                        onTap: () {},
-                                                      ),
-                                                      ListTile(
-                                                        leading: const Icon(
-                                                          Icons
-                                                              .queue_music_outlined,
-                                                        ),
-                                                        title: const Text(
-                                                          'Add to Playlist',
-                                                        ),
-                                                        onTap: () {},
-                                                      ),
-                                                      ListTile(
-                                                        leading: const Icon(
-                                                          Icons.playlist_add,
-                                                        ),
-                                                        title: const Text(
-                                                            'Add to Queue'),
-                                                        onTap: () {},
-                                                      ),
-                                                      ListTile(
-                                                        leading: const Icon(
-                                                          Icons
-                                                              .download_outlined,
-                                                        ),
-                                                        title: const Text(
-                                                            'Download'),
-                                                        onTap: () {},
-                                                      ),
-                                                      ListTile(
-                                                        leading: const Icon(
-                                                          Icons.share,
-                                                        ),
-                                                        title:
-                                                            const Text('Share'),
-                                                        onTap: () {},
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  top: 0,
-                                                  child: Card(
-                                                    elevation: 10,
-                                                    clipBehavior:
-                                                        Clip.antiAlias,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                        10,
-                                                      ),
-                                                    ),
-                                                    child: Image.network(
-                                                      sImg,
-                                                      height: 150,
-                                                      width: 150,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  top: size.height * 0.2,
-                                                  child: Text(
-                                                    sText,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 12)
+                      //       .copyWith(top: 16),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       const Padding(
+                      //         padding: EdgeInsets.symmetric(
+                      //             horizontal: 15, vertical: 7),
+                      //         child: Text(
+                      //           'Now playing Pop',
+                      //           style: TextStyle(
+                      //               color: blackColor,
+                      //               fontSize: 20,
+                      //               fontWeight: FontWeight.w700),
+                      //         ),
+                      //       ),
+                      //       SizedBox(
+                      //         height: 180,
+                      //         child: ListView.builder(
+                      //           itemCount: recentSongText.length,
+                      //           scrollDirection: Axis.horizontal,
+                      //           shrinkWrap: true,
+                      //           physics: const ClampingScrollPhysics(),
+                      //           itemBuilder: (context, idx) {
+                      //             final sText = popSongText[idx];
+                      //             final sdText = popDescText[idx];
+                      //             final sImg = popSongImg[idx];
+                      //             return RecentlyPlayedWidget(
+                      //               recentAlbumText: sText,
+                      //               isBorder: false,
+                      //               recentAlbumDescText: sdText,
+                      //               recentSongImg: sImg,
+                      //               recHeadColor: blackColor,
+                      //               recDescColor: recdescColor,
+                      //               widgett: const SizedBox(),
+                      //               // icon: Icons.play_circle_fill_outlined,
+                      //               onPressed: () {},
+                      //               onTap: () {
+                      //                 Navigator.of(context).push(
+                      //                   MaterialPageRoute(
+                      //                     builder: (_) => SongOpenScreen(
+                      //                       sTitle: sText,
+                      //                       sName: sdText,
+                      //                       sImg: sImg,
+                      //                     ),
+                      //                   ),
+                      //                 );
+                      //               },
+                      //               onLongPressed: () {
+                      //                 showModalBottomSheet(
+                      //                   isScrollControlled: true,
+                      //                   context: context,
+                      //                   backgroundColor: Colors.transparent,
+                      //                   builder: (context) {
+                      //                     return Container(
+                      //                       margin: const EdgeInsets.only(
+                      //                           bottom: 10),
+                      //                       height: size.height * 0.65,
+                      //                       child: Stack(
+                      //                         alignment: Alignment.bottomCenter,
+                      //                         children: [
+                      //                           Container(
+                      //                             width: size.width * 0.9,
+                      //                             height: size.height * 0.55,
+                      //                             padding: EdgeInsets.only(
+                      //                               top: size.height * 0.1,
+                      //                             ),
+                      //                             decoration:
+                      //                                 const BoxDecoration(
+                      //                               color: Colors.white,
+                      //                               borderRadius:
+                      //                                   BorderRadius.all(
+                      //                                 Radius.circular(12),
+                      //                               ),
+                      //                             ),
+                      //                             child: Column(
+                      //                               mainAxisAlignment:
+                      //                                   MainAxisAlignment.end,
+                      //                               children: [
+                      //                                 ListTile(
+                      //                                   leading: const Icon(
+                      //                                     Icons
+                      //                                         .play_arrow_outlined,
+                      //                                   ),
+                      //                                   title: const Text(
+                      //                                       'Play now'),
+                      //                                   onTap: () {
+                      //                                     Navigator.of(context)
+                      //                                         .pop();
+                      //                                   },
+                      //                                 ),
+                      //                                 ListTile(
+                      //                                   leading: const Icon(Icons
+                      //                                       .favorite_border),
+                      //                                   title: const Text(
+                      //                                       'Save to Library'),
+                      //                                   onTap: () {},
+                      //                                 ),
+                      //                                 ListTile(
+                      //                                   leading: const Icon(
+                      //                                     Icons
+                      //                                         .queue_music_outlined,
+                      //                                   ),
+                      //                                   title: const Text(
+                      //                                     'Add to Playlist',
+                      //                                   ),
+                      //                                   onTap: () {},
+                      //                                 ),
+                      //                                 ListTile(
+                      //                                   leading: const Icon(
+                      //                                     Icons.playlist_add,
+                      //                                   ),
+                      //                                   title: const Text(
+                      //                                       'Add to Queue'),
+                      //                                   onTap: () {},
+                      //                                 ),
+                      //                                 ListTile(
+                      //                                   leading: const Icon(
+                      //                                     Icons
+                      //                                         .download_outlined,
+                      //                                   ),
+                      //                                   title: const Text(
+                      //                                       'Download'),
+                      //                                   onTap: () {},
+                      //                                 ),
+                      //                                 ListTile(
+                      //                                   leading: const Icon(
+                      //                                     Icons.share,
+                      //                                   ),
+                      //                                   title:
+                      //                                       const Text('Share'),
+                      //                                   onTap: () {},
+                      //                                 ),
+                      //                               ],
+                      //                             ),
+                      //                           ),
+                      //                           Positioned(
+                      //                             top: 0,
+                      //                             child: Card(
+                      //                               elevation: 10,
+                      //                               clipBehavior:
+                      //                                   Clip.antiAlias,
+                      //                               shape:
+                      //                                   RoundedRectangleBorder(
+                      //                                 borderRadius:
+                      //                                     BorderRadius.circular(
+                      //                                   10,
+                      //                                 ),
+                      //                               ),
+                      //                               child: Image.network(
+                      //                                 sImg,
+                      //                                 height: 150,
+                      //                                 width: 150,
+                      //                                 fit: BoxFit.cover,
+                      //                               ),
+                      //                             ),
+                      //                           ),
+                      //                           Positioned(
+                      //                             top: size.height * 0.2,
+                      //                             child: Text(
+                      //                               sText,
+                      //                             ),
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //                     );
+                      //                   },
+                      //                 );
+                      //               },
+                      //             );
+                      //           },
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       //
                       // Padding(
                       //   padding: const EdgeInsets.symmetric(horizontal: 12)
@@ -2126,11 +2129,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               if (internal == 1)
-                Container(
-                  height: size.height,
-                  width: double.maxFinite,
-                  color: Colors.red,
-                ),
+                FutureBuilder<List<audio.SongModel>>(
+                    future: audioQuery.querySongs(
+                      sortType: null,
+                      orderType: audio.OrderType.ASC_OR_SMALLER,
+                      uriType: audio.UriType.EXTERNAL,
+                      ignoreCase: true,
+                    ),
+                    builder: (context, item) {
+                      if (item.hasError) {
+                        return Text(item.error.toString());
+                      }
+
+                      // Waiting content.
+                      if (item.data == null) {
+                        return const CircularProgressIndicator();
+                      }
+                      if (item.data!.isEmpty)
+                        return const Text("Nothing found!");
+                      return ListView.builder(
+                        itemCount: item.data!.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(item.data![index].title),
+                            subtitle:
+                                Text(item.data![index].artist ?? "No Artist"),
+                            trailing: const Icon(Icons.arrow_forward_rounded),
+                            // This Widget will query/load image.
+                            // You can use/create your own widget/method using [queryArtwork].
+                            leading: audio.QueryArtworkWidget(
+                              controller: audioQuery,
+                              id: item.data![index].id,
+                              type: audio.ArtworkType.AUDIO,
+                            ),
+                          );
+                        },
+                      );
+                    }),
               if (internal == 2)
                 SizedBox(
                   height: size.height,

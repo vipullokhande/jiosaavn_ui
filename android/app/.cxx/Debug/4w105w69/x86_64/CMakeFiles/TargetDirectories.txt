@@ -1,0 +1,2 @@
+C:/Users/Vipul/AndroidStudioProjects/jiosaavn_vip/android/app/.cxx/Debug/4w105w69/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Vipul/AndroidStudioProjects/jiosaavn_vip/android/app/.cxx/Debug/4w105w69/x86_64/CMakeFiles/rebuild_cache.dir
