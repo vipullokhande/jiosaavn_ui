@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:jiosaavn_vip/colors.dart';
 import 'package:mysql1/mysql1.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+// import 'package:on_audio_query/on_audio_query.dart';
 import 'authenticatiion/screens/splash_screen.dart';
 import 'controllers/current_song_controller.dart';
 import 'notification_controller.dart';
@@ -80,13 +80,13 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-final OnAudioQuery audioQuery = OnAudioQuery();
+// final OnAudioQuery audioQuery = OnAudioQuery();
 
 class _MyAppState extends State<MyApp> {
   bool _hasPermission = false;
   @override
   void initState() {
-    checkAndRequestPermissions();
+    // checkAndRequestPermissions();
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: NotificationController.onActionReceivedMethod,
       onDismissActionReceivedMethod:
@@ -100,15 +100,15 @@ class _MyAppState extends State<MyApp> {
     Get.put(CurrentSongController());
   }
 
-  checkAndRequestPermissions({bool retry = false}) async {
-    // The param 'retryRequest' is false, by default.
-    _hasPermission = await audioQuery.checkAndRequest(
-      retryRequest: retry,
-    );
+  // checkAndRequestPermissions({bool retry = false}) async {
+  //   // The param 'retryRequest' is false, by default.
+  //   _hasPermission = await audioQuery.checkAndRequest(
+  //     retryRequest: retry,
+  //   );
 
-    // Only call update the UI if application has all required permissions.
-    _hasPermission ? setState(() {}) : null;
-  }
+  //   // Only call update the UI if application has all required permissions.
+  //   _hasPermission ? setState(() {}) : null;
+  // }
 
   var conn = SqlConnection();
   getData() async {

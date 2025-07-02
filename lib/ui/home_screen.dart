@@ -19,7 +19,7 @@ import 'package:jiosaavn_vip/widgets/search_item.dart';
 import 'package:jiosaavn_vip/widgets/single_channel_item_search.dart';
 import 'package:jiosaavn_vip/widgets/song_player.dart';
 import 'package:jiosaavn_vip/widgets/trending_jiotunes_widget.dart';
-import 'package:on_audio_query/on_audio_query.dart' as audio;
+// import 'package:on_audio_query/on_audio_query.dart' as audio;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'https://c.saavncdn.com/506/Deva-Shree-Ganesha-Sanskrit-2012-20200518122611-500x500.jpg',
     'https://c.saavncdn.com/199/Welcome-Hindi-2007-500x500.jpg',
     'https://c.saavncdn.com/056/Bhool-Bhulaiyaa-Hindi-2007-20221122005742-500x500.jpg',
-    'https://i0.wp.com/99lyricstore.com/wp-content/uploads/2022/10/Maan-Meri-Jaan-Lyrics-King.jpg',
+    'https://video.newsserve.net/v/20230209/1675956337-Maan-Meri-Jaan-The-Official-Music-Video_hires.jpg',
   ];
   List<String> recentSongText = [
     'Pop divas',
@@ -325,8 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
   setInitialData() async {
     final sf = await SharedPreferences.getInstance();
     c.changePathAndTitleAndCategory(
-      sIP: sf.getString('img') ?? '',
-      sT: sf.getString('song') ?? '',
+      sIP: sf.getString('img') ?? hindiSongsImgUrls[0],
+      sT: sf.getString('song') ?? hindiSongs[0],
       category: sf.getInt('category') ?? 0,
     );
   }
@@ -2128,44 +2128,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-              if (internal == 1)
-                FutureBuilder<List<audio.SongModel>>(
-                    future: audioQuery.querySongs(
-                      sortType: null,
-                      orderType: audio.OrderType.ASC_OR_SMALLER,
-                      uriType: audio.UriType.EXTERNAL,
-                      ignoreCase: true,
-                    ),
-                    builder: (context, item) {
-                      if (item.hasError) {
-                        return Text(item.error.toString());
-                      }
-
-                      // Waiting content.
-                      if (item.data == null) {
-                        return const CircularProgressIndicator();
-                      }
-                      if (item.data!.isEmpty)
-                        return const Text("Nothing found!");
-                      return ListView.builder(
-                        itemCount: item.data!.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(item.data![index].title),
-                            subtitle:
-                                Text(item.data![index].artist ?? "No Artist"),
-                            trailing: const Icon(Icons.arrow_forward_rounded),
-                            // This Widget will query/load image.
-                            // You can use/create your own widget/method using [queryArtwork].
-                            leading: audio.QueryArtworkWidget(
-                              controller: audioQuery,
-                              id: item.data![index].id,
-                              type: audio.ArtworkType.AUDIO,
-                            ),
-                          );
-                        },
-                      );
-                    }),
+              if (internal == 1) SizedBox(),
+              // FutureBuilder<List<audio.SongModel>>(
+              //     future: audioQuery.querySongs(
+              //       sortType: null,
+              //       orderType: audio.OrderType.ASC_OR_SMALLER,
+              //       uriType: audio.UriType.EXTERNAL,
+              //       ignoreCase: true,
+              //     ),
+              //     builder: (context, item) {
+              //       if (item.hasError) {
+              //         return Text(item.error.toString());
+              //       }
+              //       // Waiting content.
+              //       if (item.data == null) {
+              //         return const CircularProgressIndicator();
+              //       }
+              //       if (item.data!.isEmpty)
+              //         return const Text("Nothing found!");
+              //       return ListView.builder(
+              //         itemCount: item.data!.length,
+              //         itemBuilder: (context, index) {
+              //           return ListTile(
+              //             title: Text(item.data![index].title),
+              //             subtitle:
+              //                 Text(item.data![index].artist ?? "No Artist"),
+              //             trailing: const Icon(Icons.arrow_forward_rounded),
+              //             // This Widget will query/load image.
+              //             // You can use/create your own widget/method using [queryArtwork].
+              //             leading: audio.QueryArtworkWidget(
+              //               controller: audioQuery,
+              //               id: item.data![index].id,
+              //               type: audio.ArtworkType.AUDIO,
+              //             ),
+              //           );
+              //         },
+              //       );
+              //     }),
               if (internal == 2)
                 SizedBox(
                   height: size.height,
